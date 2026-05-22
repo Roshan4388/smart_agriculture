@@ -1,14 +1,20 @@
 /* Global styles */
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    min-height: 100vh;
     background: #f3f7fb url('../images/backgrounds/agriculture-bg.svg') no-repeat center center / cover;
     color: #222;
+    transition: background .4s ease, color .4s ease;
 }
 
 nav {
-    background: #144d4f;
+    background: transparent;
     padding: 14px 20px;
 }
 
@@ -131,30 +137,74 @@ nav a {
 
 /* Additional interface styles */
 .main-nav {
+    position: sticky;
+    top: 0;
+    z-index: 9999;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 20px;
-    background: #144d4f;
+    padding: 18px 24px;
+    margin: 0;
+    background: rgba(18, 76, 80, 0.58);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 18px 45px rgba(7, 39, 52, 0.12);
+    transition: background .35s ease, transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+    opacity: 0.98;
+    animation: navIn .8s ease forwards;
+    transform: translateY(-20px);
+}
+.main-nav.scrolled {
+    background: rgba(10, 58, 62, 0.88);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 22px 50px rgba(7, 39, 52, 0.2);
 }
 .main-nav ul {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
 }
 .main-nav li {
     list-style: none;
 }
 .main-nav a {
-    color: #fff;
+    color: #f4fbfd;
     text-decoration: none;
     font-size: 0.95rem;
+    position: relative;
+    padding: 8px 6px;
+    transition: color .25s ease, transform .25s ease;
+}
+.main-nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    background: #79f4e2;
+    transition: transform .28s ease;
+}
+.main-nav a:hover {
+    color: #c9f8f5;
+    transform: translateY(-1px);
+}
+.main-nav a:hover::after {
+    transform: scaleX(1);
 }
 .nav-user {
     margin-left: auto;
     color: #d4f0ef;
     font-weight: 700;
+}
+@keyframes navIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 .hero-section {
     display: grid;
@@ -193,13 +243,18 @@ nav a {
 .feature-card,
 .recommendation-card,
 .dashboard-card {
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    transition: transform 0.22s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 12px 22px rgba(17, 82, 91, 0.08);
 }
 .feature-card:hover,
 .recommendation-card:hover,
 .dashboard-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 16px 36px rgba(16, 95, 100, 0.12);
+    transform: translateY(-6px);
+    box-shadow: 0 26px 60px rgba(15, 84, 97, 0.16);
+    border-color: rgba(19, 116, 125, 0.18);
 }
 .btn-secondary,
 .btn-primary,
@@ -374,6 +429,32 @@ nav a {
     justify-content: space-between;
     gap: 16px;
     margin-bottom: 20px;
+}
+.back-to-top {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #13a9b9, #04f4e7);
+    color: #05333c;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: 0 18px 35px rgba(4, 39, 46, 0.18);
+    transition: opacity .3s ease, transform .3s ease, visibility .3s ease;
+    z-index: 9999;
+}
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-4px);
+}
+.back-to-top:hover {
+    transform: translateY(-6px) scale(1.05);
 }
 .data-table {
     width: 100%;

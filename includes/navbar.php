@@ -27,3 +27,4 @@ $baseUrl = $config['base_url'];
         <?php endif; ?>
     </ul>
 </nav>
+<script src="<?= $baseUrl ?>/assets/js/site.js" defer></script>
