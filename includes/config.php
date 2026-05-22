@@ -6,5 +6,18 @@ return [
     'version' => '1.0.0',
     'base_url' => '/smart_agriculture',
     'supported_languages' => ['en' => 'English', 'ne' => 'नेपाली'],
+    'sms' => [
+        'provider' => 'log',
+        'test_mode' => true,
+        'twilio' => [
+            'sid' => '',
+            'token' => '',
+            'from' => '',
+        ],
+    ],
+    'otp' => [
+        'length' => 6,
+        'expires_minutes' => 10,
+    ],
 ];
 ?>

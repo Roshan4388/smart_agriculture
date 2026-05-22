@@ -8,13 +8,16 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
+    $phone = trim($_POST['phone'] ?? '');
     $password = trim($_POST['password'] ?? '');
     $confirm = trim($_POST['confirm_password'] ?? '');
 
-    if (!$name || !$email || !$password || !$confirm) {
+    if (!$name || !$email || !$phone || !$password || !$confirm) {
         $error = 'Please fill in all fields.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Enter a valid email address.';
+    } elseif (!preg_match('/^\+?[0-9 \-]{8,20}$/', $phone)) {
+        $error = 'Enter a valid phone number with country code.';
     } elseif ($password !== $confirm) {
         $error = 'Passwords do not match.';
     } elseif (strlen($password) < 6) {
@@ -30,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
             $role = 'farmer';
-            $stmt = $mysqli->prepare('INSERT INTO users (name, email, password, role, created_at) VALUES (?, ?, ?, ?, NOW())');
-            $stmt->bind_param('ssss', $name, $email, $passwordHash, $role);
+            $stmt = $mysqli->prepare('INSERT INTO users (name, email, phone, password, role, created_at) VALUES (?, ?, ?, ?, ?, NOW())');
+            $stmt->bind_param('sssss', $name, $email, $phone, $passwordHash, $role);
             if ($stmt->execute()) {
                 $_SESSION['user_id'] = $mysqli->insert_id;
                 $_SESSION['user_name'] = $name;
@@ -56,33 +59,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="auth-page">
     <div class="auth-card">
-        <h1>Create Account</h1>
-        <p>Register to access your farm dashboard, crop recommendations, and marketplace features.</p>
-        <?php if ($error) : ?>
-            <div class="error-message"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
-        <form method="post" action="register.php" onsubmit="return validateSignIn();">
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" placeholder="Your name" required value="<?= htmlspecialchars($_POST['name'] ?? '') ?>">
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="you@example.com" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Create a password" required>
-            </div>
-            <div class="form-group">
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" placeholder="Repeat your password" required>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn-primary">Register</button>
-            </div>
-            <p class="auth-note">Already have an account? <a href="sign-in.php">Sign in</a></p>
-        </form>
+        <div class="auth-image">
+            <img src="assets/images/auth-register.svg" alt="Register illustration">
+        </div>
+        <div class="auth-panel">
+            <a href="sign-in.php" class="btn-back">&larr; Back to Sign In</a>
+            <h1>Create Account</h1>
+            <p>Register to access your farm dashboard, crop recommendations, and marketplace features.</p>
+            <?php if ($error) : ?>
+                <div id="signin-error" class="error-message"><?= htmlspecialchars($error) ?></div>
+            <?php else: ?>
+                <div id="signin-error" class="error-message" style="display:none;"></div>
+            <?php endif; ?>
+            <form method="post" action="register.php" onsubmit="return validateSignIn();">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your name" required value="<?= htmlspecialchars($_POST['name'] ?? '') ?>">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="+977 9800000000" required value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Repeat your password" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Register</button>
+                    <a href="sign-in.php" class="btn-secondary">Back to Sign In</a>
+                </div>
+                <p class="auth-note">Already have an account? <a href="sign-in.php">Sign in</a></p>
+            </form>
+        </div>
     </div>
     <script src="assets/js/signin.js"></script>
 </body>

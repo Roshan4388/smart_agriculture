@@ -19,25 +19,34 @@ $error = isset($_GET['error']) ? htmlspecialchars($_GET['error']) : '';
 </head>
 <body class="auth-page">
     <div class="auth-card">
-        <h1>Sign In</h1>
-        <p>Securely access your Smart Agriculture dashboard and field intelligence.</p>
-        <?php if ($error) : ?>
-            <div class="error-message"><?= $error ?></div>
-        <?php endif; ?>
-        <form id="signin-form" onsubmit="return validateSignIn();" method="post" action="login.php">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="you@example.com" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn-primary">Sign In</button>
-            </div>
-            <p class="auth-note">Don't have an account? <a href="register.php">Register now</a></p>
-        </form>
+        <div class="auth-image">
+            <img src="assets/images/auth-signin.svg" alt="Sign in illustration">
+        </div>
+        <div class="auth-panel">
+            <a href="index.php" class="btn-back">&larr; Back to Home</a>
+            <h1>Sign In</h1>
+            <p>Securely access your Smart Agriculture dashboard and field intelligence.</p>
+            <?php if ($error) : ?>
+                <div id="signin-error" class="error-message"><?= $error ?></div>
+            <?php else: ?>
+                <div id="signin-error" class="error-message" style="display:none;"></div>
+            <?php endif; ?>
+            <form id="signin-form" onsubmit="return validateSignIn();" method="post" action="login.php">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Sign In</button>
+                    <a href="request-otp.php" class="btn-secondary">Login with OTP</a>
+                </div>
+                <p class="auth-note">Don't have an account? <a href="register.php">Register now</a></p>
+            </form>
+        </div>
     </div>
     <script src="assets/js/signin.js"></script>
 </body>
