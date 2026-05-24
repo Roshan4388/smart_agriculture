@@ -129,9 +129,10 @@ nav {
     margin-left: 300px;
 }
 
-/* Ensure auth pages are visible when side navbar is present */
+/* Auth pages should center normally without a hidden sidebar */
 .auth-page {
-    margin-left: 300px;
+    margin-left: 0;
+    padding-left: 20px;
 }
 
 .home-page {
