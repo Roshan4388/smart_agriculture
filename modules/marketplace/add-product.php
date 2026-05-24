@@ -39,9 +39,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <?php include __DIR__ . '/../../includes/navbar.php'; ?>
+    <?php
+    $groupId = intval($_GET['group_id'] ?? 0);
+    $backLink = $groupId ? 'products.php?group_id=' . $groupId : 'products.php';
+    ?>
     <main class="dashboard-page">
         <section class="dashboard-section">
-            <h1>Add Marketplace Product</h1>
+            <div class="section-header">
+                <div>
+                    <a class="btn-secondary" href="<?= htmlspecialchars($backLink) ?>">&larr; Back to Products</a>
+                    <h1>Add Marketplace Product</h1>
+                </div>
+            </div>
             <p>Post a produce listing to connect with buyers and manage orders from the marketplace.</p>
             <?php if ($success) : ?>
                 <div class="alert-item alert-info"><?= htmlspecialchars($success) ?></div>
@@ -49,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php if ($error) : ?>
                 <div class="alert-item alert-high"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
-            <form method="post" action="add-product.php" class="contact-form">
+            <form method="post" action="add-product.php<?= $groupId ? '?group_id=' . $groupId : '' ?>" class="contact-form">
                 <div class="form-group">
                     <label for="title">Product title</label>
                     <input type="text" id="title" name="title" required value="<?= htmlspecialchars($_POST['title'] ?? '') ?>">

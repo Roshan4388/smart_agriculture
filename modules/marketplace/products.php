@@ -24,11 +24,23 @@ if ($result) {
 </head>
 <body>
     <?php include __DIR__ . '/../../includes/navbar.php'; ?>
+    <?php
+    $backLink = '';
+    if (!empty($_GET['group_id'])) {
+        $groupId = intval($_GET['group_id']);
+        $backLink = '../groups/group-details.php?id=' . $groupId;
+    }
+    ?>
     <main class="dashboard-page">
         <section class="dashboard-section">
             <div class="section-header">
-                <h1>Marketplace Products</h1>
-                <a class="secondary-link" href="add-product.php">Add New Product</a>
+                <div>
+                    <?php if ($backLink) : ?>
+                        <a class="btn-secondary" href="<?= htmlspecialchars($backLink) ?>">&larr; Back to Group</a>
+                    <?php endif; ?>
+                    <h1>Marketplace Products</h1>
+                </div>
+                <a class="secondary-link" href="add-product.php<?= $backLink ? '?group_id=' . intval($_GET['group_id']) : '' ?>">Add New Product</a>
             </div>
             <?php if (empty($products)) : ?>
                 <div class="alert-item alert-info">No products are available yet. Add a listing to start selling your produce.</div>

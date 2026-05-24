@@ -117,10 +117,16 @@ if ($itemResult) {
     <main class="dashboard-page">
         <section class="dashboard-section">
             <div class="section-header">
-                <h1><?= htmlspecialchars($group['name']) ?></h1>
-                <a class="secondary-link" href="groups.php">Back to Groups</a>
+                <div>
+                    <a class="btn-secondary" href="groups.php">&larr; Back to Groups</a>
+                    <h1><?= htmlspecialchars($group['name']) ?></h1>
+                </div>
+                <a class="secondary-link" href="groups.php">View all groups</a>
             </div>
             <p><?= nl2br(htmlspecialchars($group['description'])) ?></p>
+            <div class="group-actions" style="margin-bottom: 20px;">
+                <a class="btn-secondary" href="../marketplace/products.php?group_id=<?= $groupId ?>">Open group marketplace</a>
+            </div>
             <div class="dashboard-grid stats-grid">
                 <article class="dashboard-card">
                     <h3>Land Option</h3>
