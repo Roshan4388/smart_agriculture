@@ -9,10 +9,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
+    $address = trim($_POST['address'] ?? '');
+    $experience = trim($_POST['experience'] ?? '');
+    $agricultureField = trim($_POST['agriculture_field'] ?? '');
     $password = trim($_POST['password'] ?? '');
     $confirm = trim($_POST['confirm_password'] ?? '');
 
-    if (!$name || !$email || !$phone || !$password || !$confirm) {
+    if (!$name || !$email || !$phone || !$address || !$experience || !$agricultureField || !$password || !$confirm) {
         $error = 'Please fill in all fields.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Enter a valid email address.';
@@ -33,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
             $role = 'farmer';
-            $stmt = $mysqli->prepare('INSERT INTO users (name, email, phone, password, role, created_at) VALUES (?, ?, ?, ?, ?, NOW())');
-            $stmt->bind_param('sssss', $name, $email, $phone, $passwordHash, $role);
+            $stmt = $mysqli->prepare('INSERT INTO users (name, email, phone, address, experience, agriculture_field, password, role, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())');
+            $stmt->bind_param('ssssssss', $name, $email, $phone, $address, $experience, $agricultureField, $passwordHash, $role);
             if ($stmt->execute()) {
                 $_SESSION['user_id'] = $mysqli->insert_id;
                 $_SESSION['user_name'] = $name;
@@ -85,12 +88,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="tel" id="phone" name="phone" placeholder="+977 9800000000" required value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>">
                 </div>
                 <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" placeholder="Your address" required value="<?= htmlspecialchars($_POST['address'] ?? '') ?>">
+                </div>
+                <div class="form-group">
+                    <label for="agriculture_field">Agriculture Field</label>
+                    <input type="text" id="agriculture_field" name="agriculture_field" placeholder="E.g., horticulture, cereals, dairy" required value="<?= htmlspecialchars($_POST['agriculture_field'] ?? '') ?>">
+                </div>
+                <div class="form-group">
+                    <label for="experience">Experience</label>
+                    <input type="text" id="experience" name="experience" placeholder="E.g., 5 years of vegetable farming" required value="<?= htmlspecialchars($_POST['experience'] ?? '') ?>">
+                </div>
+                <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" placeholder="Create a password" required>
                 </div>
                 <div class="form-group">
                     <label for="confirm_password">Confirm Password</label>
                     <input type="password" id="confirm_password" name="confirm_password" placeholder="Repeat your password" required>
+                </div>
+                        <input type="checkbox" name="terms" required> I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                    </label>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn-primary">Register</button>

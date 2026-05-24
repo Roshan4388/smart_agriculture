@@ -15,6 +15,21 @@ if ($phoneColumn && $phoneColumn->num_rows === 0) {
     $mysqli->query("ALTER TABLE users ADD COLUMN phone VARCHAR(20) DEFAULT NULL");
 }
 
+$addressColumn = $mysqli->query("SHOW COLUMNS FROM users LIKE 'address'");
+if ($addressColumn && $addressColumn->num_rows === 0) {
+    $mysqli->query("ALTER TABLE users ADD COLUMN address VARCHAR(255) DEFAULT NULL");
+}
+
+$experienceColumn = $mysqli->query("SHOW COLUMNS FROM users LIKE 'experience'");
+if ($experienceColumn && $experienceColumn->num_rows === 0) {
+    $mysqli->query("ALTER TABLE users ADD COLUMN experience VARCHAR(100) DEFAULT NULL");
+}
+
+$agricultureFieldColumn = $mysqli->query("SHOW COLUMNS FROM users LIKE 'agriculture_field'");
+if ($agricultureFieldColumn && $agricultureFieldColumn->num_rows === 0) {
+    $mysqli->query("ALTER TABLE users ADD COLUMN agriculture_field VARCHAR(100) DEFAULT NULL");
+}
+
 $mysqli->query("CREATE TABLE IF NOT EXISTS otp_codes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
