@@ -1,4 +1,8 @@
 /* Global styles */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 html {
     scroll-behavior: smooth;
 }
@@ -131,8 +135,8 @@ nav {
 
 /* Auth pages should center normally without a hidden sidebar */
 .auth-page {
-    margin-left: 0;
-    padding-left: 20px;
+    margin-left: 0 !important;
+    padding-left: 0;
 }
 
 .home-page {
@@ -530,6 +534,7 @@ nav {
 }
 .auth-card {
     width: min(100%, 980px);
+    max-width: 980px;
     display: grid;
     grid-template-columns: minmax(320px, 1.1fr) minmax(280px, 420px);
     gap: 2rem;
@@ -537,6 +542,8 @@ nav {
     border-radius: 28px;
     box-shadow: 0 18px 50px rgba(4, 41, 54, 0.12);
     overflow: hidden;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 .auth-panel {
     padding: 42px 36px;
@@ -689,35 +696,6 @@ nav {
 }
 
 
-.auth-page {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-    background: #f3f7fb url('../images/backgrounds/agriculture-bg.svg') no-repeat center center / cover;
-}
-
-.auth-card {
-    width: min(460px, 100%);
-    background: rgba(255, 255, 255, 0.94);
-    border-radius: 22px;
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
-    padding: 36px 32px;
-    text-align: center;
-}
-
-.auth-card h1 {
-    margin: 0;
-    font-size: 2rem;
-    color: #183c41;
-}
-
-.auth-card p {
-    color: #4a5b63;
-    margin: 12px 0 26px;
-    line-height: 1.6;
-}
 
 .form-group {
     text-align: left;
