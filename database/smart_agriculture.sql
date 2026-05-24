@@ -90,6 +90,41 @@ CREATE TABLE IF NOT EXISTS field_boundaries (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS user_groups (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(200) NOT NULL,
+  owner_user_id INT NOT NULL,
+  owner_role ENUM('farmer','expert','market_member','assistant') NOT NULL DEFAULT 'farmer',
+  description TEXT DEFAULT NULL,
+  land_mode ENUM('own','virtual') NOT NULL DEFAULT 'own',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (owner_user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS group_members (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  group_id INT NOT NULL,
+  user_id INT NOT NULL,
+  role ENUM('farmer','expert','market_member','assistant') NOT NULL DEFAULT 'farmer',
+  joined_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (group_id) REFERENCES user_groups(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS group_items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  group_id INT NOT NULL,
+  user_id INT NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  item_type ENUM('product','service') NOT NULL DEFAULT 'product',
+  category VARCHAR(120) DEFAULT NULL,
+  price DECIMAL(12,2) DEFAULT NULL,
+  description TEXT DEFAULT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (group_id) REFERENCES user_groups(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Example admin user
 INSERT INTO users (name, email, password, role) VALUES
 ('Admin User', 'admin@smartagri.local', '$2y$10$kQvd0wVNX6wJTLP3rwm/7.ipZnsqD7AIhb3pHvdFDKGtjBuaukf1i', 'admin');

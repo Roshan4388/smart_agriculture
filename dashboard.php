@@ -37,6 +37,7 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
     <title>Dashboard - <?= htmlspecialchars($config['app_name']) ?></title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
     <?php include __DIR__ . '/includes/navbar.php'; ?>
@@ -99,6 +100,9 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
             </div>
             <div class="dashboard-grid action-grid">
                 <article class="dashboard-card">
+                    <a href="modules/groups/groups.php">Manage Groups</a>
+                </article>
+                <article class="dashboard-card">
                     <a href="modules/marketplace/products.php">Manage Marketplace</a>
                 </article>
                 <article class="dashboard-card">
@@ -110,8 +114,8 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
             </div>
         </section>
     </main>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="assets/js/map.js"></script>
     <script src="assets/js/alert.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap"></script>
 </body>
 </html>

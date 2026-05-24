@@ -3,35 +3,26 @@ let map;
 let ownerBoundary;
 
 function initMap() {
-    const ownerCenter = { lat: 37.7749, lng: -122.4194 };
+    const ownerCenter = [27.7172, 85.3240];
 
-    map = new google.maps.Map(document.getElementById('land-map'), {
-        zoom: 16,
-        center: ownerCenter,
-        mapTypeId: 'satellite',
-        tilt: 45,
-    });
+    map = L.map('land-map').setView(ownerCenter, 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
 
-    ownerBoundary = new google.maps.Rectangle({
-        strokeColor: '#00FF00',
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
+    const bounds = [
+        [ownerCenter[0] - 0.003, ownerCenter[1] - 0.004],
+        [ownerCenter[0] + 0.003, ownerCenter[1] + 0.004],
+    ];
+
+    ownerBoundary = L.rectangle(bounds, {
+        color: '#00FF00',
+        weight: 2,
         fillColor: '#00FF00',
         fillOpacity: 0.15,
-        map: map,
-        bounds: {
-            north: ownerCenter.lat + 0.003,
-            south: ownerCenter.lat - 0.003,
-            east: ownerCenter.lng + 0.004,
-            west: ownerCenter.lng - 0.004,
-        },
-    });
+    }).addTo(map);
 
-    new google.maps.Marker({
-        position: ownerCenter,
-        map: map,
-        title: 'Owner Land Center',
-    });
+    L.marker(ownerCenter).addTo(map).bindPopup('Owner Land Center').openPopup();
 
     setTimeout(() => {
         simulateFieldData();
@@ -55,3 +46,9 @@ function simulateFieldData() {
 
     feed.innerHTML = data.map(item => `<p>${item}</p>`).join('');
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('land-map')) {
+        initMap();
+    }
+});

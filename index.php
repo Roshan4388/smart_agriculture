@@ -49,6 +49,42 @@ $baseUrl = $config['base_url'];
             </article>
         </section>
 
+        <section class="live-dashboard">
+            <div class="dashboard-panel panel-3d">
+                <div class="dashboard-panel-header">
+                    <span>AI Disease Detection</span>
+                    <h2>Live Crop Health</h2>
+                </div>
+                <p>Continuously monitor crop health using AI-powered detection indicators and receive alerts for disease risk in real time.</p>
+                <div class="detection-overview">
+                    <div class="detection-stat">
+                        <strong id="disease-status">Stable</strong>
+                        <small>Current status</small>
+                    </div>
+                    <div class="detection-stat">
+                        <strong id="disease-risk">5%</strong>
+                        <small>Risk score</small>
+                    </div>
+                    <div class="detection-stat">
+                        <strong id="disease-type">No issues found</strong>
+                        <small>Detected condition</small>
+                    </div>
+                </div>
+                <div class="detection-feed" id="disease-live-feed">
+                    <p>Analyzing leaf images and field sensors...</p>
+                </div>
+            </div>
+            <div class="info-panel panel-3d">
+                <h2>Live Detection Notes</h2>
+                <p>AI scans incoming field data and suggests actions like targeted inspection, irrigation checks, or immediate treatment when risk rises.</p>
+                <ul>
+                    <li>Dynamic disease alerts at farm scale.</li>
+                    <li>Vegetation stress detection with image-based analysis.</li>
+                    <li>Action suggestions for early intervention.</li>
+                </ul>
+            </div>
+        </section>
+
         <section class="info-section">
             <h2>Why this system matters</h2>
             <p>Modern farmers need accurate field data and actionable recommendations. This platform turns traditional agriculture into a data-driven ecosystem.</p>
@@ -62,5 +98,6 @@ $baseUrl = $config['base_url'];
     <footer class="site-footer">
         <p>&copy; <?= date('Y') ?> <?= htmlspecialchars($config['app_name']) ?>. All rights reserved.</p>
     </footer>
+    <script src="assets/js/disease-dashboard.js"></script>
 </body>
 </html>

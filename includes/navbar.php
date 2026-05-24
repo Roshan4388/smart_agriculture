@@ -12,6 +12,7 @@ $baseUrl = $config['base_url'];
         <li><a href="<?= $baseUrl ?>/modules/crops/recommendation.php">Recommendations</a></li>
         <li><a href="<?= $baseUrl ?>/modules/security/alerts.php">Alerts</a></li>
         <li><a href="<?= $baseUrl ?>/modules/marketplace/products.php">Marketplace</a></li>
+        <li><a href="<?= $baseUrl ?>/modules/groups/groups.php">Groups</a></li>
         <li><a href="<?= $baseUrl ?>/modules/experts/experts.php">Experts</a></li>
         <li><a href="<?= $baseUrl ?>/modules/weather/weather.php">Weather</a></li>
         <li><a href="<?= $baseUrl ?>/contact.php">Contact</a></li>
