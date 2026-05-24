@@ -116,6 +116,11 @@ nav {
     margin-left: 300px;
 }
 
+/* Ensure auth pages are visible when side navbar is present */
+.auth-page {
+    margin-left: 300px;
+}
+
 .home-page {
     perspective: 1400px;
 }
