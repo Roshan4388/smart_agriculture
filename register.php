@@ -60,7 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
 </head>
-<body class="auth-page">
+
+<body>
+    <div class="container";>
+        <form action="" method="post">
+            <div class="auth-page">
     <div class="auth-card">
         <div class="auth-image">
             <img src="assets/images/auth-register.svg" alt="Register illustration">
@@ -121,5 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
     <script src="assets/js/signin.js"></script>
+</div>
+        </form>
+    </div>
 </body>
 </html>

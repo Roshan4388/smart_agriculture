@@ -7,10 +7,24 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     min-height: 100vh;
+    overflow-x: hidden;
     background: radial-gradient(circle at top left, rgba(21, 116, 131, 0.26), transparent 28%), linear-gradient(180deg, #d3f5f8 0%, #eff9fb 45%, #f8fbff 100%);
     color: #10262d;
     transition: background .4s ease, color .4s ease;
+}
+.container {
+    width: 100%;
+    max-width: 4500px;
+    padding: 20px;
+    margin:  auto;
+}
+input{
+    width: 100%;
+    box-sizing: border-box;
 }
 
 nav {
@@ -25,6 +39,7 @@ nav {
     left: 0;
     bottom: 0;
     width: 260px;
+    padding: top 80px;
     display: flex;
     align-items: flex-start;
     padding: 28px 18px;
