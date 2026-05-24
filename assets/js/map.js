@@ -24,9 +24,24 @@ function initMap() {
 
     L.marker(ownerCenter).addTo(map).bindPopup('Owner Land Center').openPopup();
 
+    loadFieldMarkers();
+
     setTimeout(() => {
         simulateFieldData();
     }, 1000);
+}
+
+function loadFieldMarkers() {
+    fetch('fetch_fields.php')
+        .then(res => res.json())
+        .then(fields => {
+            fields.forEach(field => {
+                L.marker([field.latitude, field.longitude])
+                    .bindPopup(`<b>${field.field_name}</b><br>Crop: ${field.crop_type}`)
+                    .addTo(map);
+            });
+        })
+        .catch(error => console.error('Error loading fields:', error));
 }
 
 function simulateFieldData() {
