@@ -42,76 +42,118 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
 <body>
     <?php include __DIR__ . '/includes/navbar.php'; ?>
     <main class="dashboard-page">
-        <section class="dashboard-section welcome-panel">
-            <h1>Welcome back, <?= htmlspecialchars($user['name']) ?></h1>
-            <p>Access land tracking, crop recommendations, weather forecasting, security alerts and market updates from one dashboard.</p>
+        <section class="dashboard-section page-top-panel">
+            <div class="page-header">
+                <div>
+                    <span class="eyebrow">Farmer Dashboard</span>
+                    <h1>Monitor your farm in one place</h1>
+                    <p>Temperature, humidity, soil moisture, water level, crop health and weather status are all updated in real time for smarter decisions.</p>
+                </div>
+                <button class="theme-toggle">🌙 Dark mode</button>
+            </div>
         </section>
 
-        <section class="dashboard-grid stats-grid">
-            <article class="dashboard-card">
-                <h3>Total Crop Profiles</h3>
-                <p><?= $cropCount ?></p>
+        <section class="dashboard-grid sensor-grid">
+            <article class="dashboard-card sensor-card green-card">
+                <span class="sensor-title">Temperature</span>
+                <strong class="sensor-value">24°C</strong>
+                <span class="sensor-note">Stable, safe for morning irrigation</span>
             </article>
-            <article class="dashboard-card">
-                <h3>Marketplace Listings</h3>
-                <p><?= $productCount ?></p>
+            <article class="dashboard-card sensor-card blue-card">
+                <span class="sensor-title">Humidity</span>
+                <strong class="sensor-value">68%</strong>
+                <span class="sensor-note">Normal humidity for most crops</span>
             </article>
-            <article class="dashboard-card">
-                <h3>Orders Received</h3>
-                <p><?= $orderCount ?></p>
+            <article class="dashboard-card sensor-card brown-card">
+                <span class="sensor-title">Soil Moisture</span>
+                <strong class="sensor-value">42%</strong>
+                <span class="sensor-note">Needs slight irrigation soon</span>
+            </article>
+            <article class="dashboard-card sensor-card water-card">
+                <span class="sensor-title">Water Level</span>
+                <strong class="sensor-value">58%</strong>
+                <span class="sensor-note">Tank level adequate for 2 cycles</span>
+            </article>
+            <article class="dashboard-card sensor-card health-card">
+                <span class="sensor-title">Crop Health</span>
+                <strong class="sensor-value">Good</strong>
+                <span class="sensor-note">Leaf sensors and NDVI are in a healthy range</span>
+            </article>
+            <article class="dashboard-card sensor-card weather-card">
+                <span class="sensor-title">Weather Status</span>
+                <strong class="sensor-value">Partly Cloudy</strong>
+                <span class="sensor-note">Rain forecast in 4 hours</span>
+            </article>
+        </section>
+
+        <section class="dashboard-section status-panel">
+            <div class="section-header">
+                <h2>Alert Center</h2>
+            </div>
+            <div class="alert-grid">
+                <div class="alert-item alert-medium">Low soil moisture ⚠️ — Check drip lines in east field.</div>
+                <div class="alert-item alert-high">High temperature 🔥 — Open shade nets and increase misting.</div>
+                <div class="alert-item alert-medium">Water tank low 💧 — Refill before next irrigation cycle.</div>
+                <div class="alert-item alert-info">Rain forecast ☁️ — Dry set irrigation to passive mode.</div>
+            </div>
+        </section>
+
+        <section class="dashboard-grid farmer-grid">
+            <article class="dashboard-card control-panel">
+                <h3>Farmer Control Panel</h3>
+                <div class="control-grid">
+                    <div class="control-card">
+                        <h4>Irrigation</h4>
+                        <button class="btn-primary">Turn irrigation ON</button>
+                        <button class="btn-secondary">Turn irrigation OFF</button>
+                    </div>
+                    <div class="control-card">
+                        <h4>Sensor Values</h4>
+                        <ul>
+                            <li>Temperature: 24°C</li>
+                            <li>Humidity: 68%</li>
+                            <li>Soil moisture: 42%</li>
+                            <li>Water level: 58%</li>
+                        </ul>
+                    </div>
+                    <div class="control-card">
+                        <h4>Crop Growth</h4>
+                        <p>Growth trend is healthy. Next harvest window is in 12 days.</p>
+                    </div>
+                    <div class="control-card">
+                        <h4>Fertilizer Reminder</h4>
+                        <p>Apply organic fertilizer in 3 days to support leafy growth.</p>
+                    </div>
+                </div>
+            </article>
+            <article class="dashboard-card feature-panel">
+                <h3>Project Pages</h3>
+                <div class="feature-grid">
+                    <a class="feature-card" href="dashboard.php">Dashboard</a>
+                    <a class="feature-card" href="modules/crops/recommendation.php">Crop Monitoring</a>
+                    <a class="feature-card" href="irrigation-control.php">Irrigation Control</a>
+                    <a class="feature-card" href="weather-forecast.php">Weather Forecast</a>
+                    <a class="feature-card" href="reports.php">Reports</a>
+                    <a class="feature-card" href="settings.php">Settings</a>
+                </div>
+                <h4>UX Highlights</h4>
+                <ul class="recommendation-list">
+                    <li>Easy-to-read graphs and status cards</li>
+                    <li>Large buttons built for a farmer-friendly interface</li>
+                    <li>Green / water / soil theme with clean white surfaces</li>
+                    <li>Responsive mobile layout with dark/light mode</li>
+                    <li>Real-time status updates and push alerts</li>
+                </ul>
             </article>
         </section>
 
         <section class="dashboard-section map-panel">
             <div class="section-header">
-                <h2>3D Land Visualization</h2>
-                <a class="secondary-link" href="modules/maps/land-map.php">Open full map</a>
+                <h2>3D Farm Visualization</h2>
+                <a class="secondary-link" href="modules/maps/land-map.php">View Interactive Map</a>
             </div>
             <div id="land-map" class="map-container"></div>
-            <p class="caption">Interactive boundary tracking and virtual farm preview. Replace <code>YOUR_GOOGLE_MAPS_API_KEY</code> with your API key.</p>
-        </section>
-
-        <section class="dashboard-grid">
-            <article class="dashboard-card">
-                <h3>Current Weather</h3>
-                <ul>
-                    <li>Temperature: <?= $currentWeather['temperature'] ?>°C</li>
-                    <li>Humidity: <?= $currentWeather['humidity'] ?>%</li>
-                    <li>Rainfall chance: <?= $currentWeather['rainfall'] ?>%</li>
-                    <li>Condition: <?= htmlspecialchars($currentWeather['condition']) ?></li>
-                </ul>
-                <p class="recommendation-card"><?= htmlspecialchars($currentWeather['recommendation']) ?></p>
-            </article>
-            <article class="dashboard-card">
-                <h3>Seasonal Crop Recommendation</h3>
-                <p><?= htmlspecialchars($recommendation) ?></p>
-                <a class="btn-secondary" href="modules/crops/recommendation.php">View recommendations</a>
-            </article>
-            <article class="dashboard-card">
-                <h3>Security Monitoring</h3>
-                <p>Unauthorized access detection, boundary crossing alerts, and live device tracking.</p>
-                <a class="btn-secondary" href="modules/security/alerts.php">View alerts</a>
-            </article>
-        </section>
-
-        <section class="dashboard-section">
-            <div class="section-header">
-                <h2>Quick Actions</h2>
-            </div>
-            <div class="dashboard-grid action-grid">
-                <article class="dashboard-card">
-                    <a href="modules/groups/groups.php">Manage Groups</a>
-                </article>
-                <article class="dashboard-card">
-                    <a href="modules/marketplace/products.php">Manage Marketplace</a>
-                </article>
-                <article class="dashboard-card">
-                    <a href="modules/experts/consultation.php">Request Expert Consultation</a>
-                </article>
-                <article class="dashboard-card">
-                    <a href="modules/weather/forecast.php">View Weather Forecast</a>
-                </article>
-            </div>
+            <p class="caption">Use the map to inspect your land sections, crop blocks, and virtual irrigation zones.</p>
         </section>
     </main>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>

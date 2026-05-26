@@ -89,6 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="tel" id="phone" name="phone" placeholder="+977 9800000000" required value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>">
                 </div>
                 <div class="form-group">
+                    <label for="device_id">Device ID</label>
+                    <input type="text" id="device_id" name="device_id" placeholder="E.g., SENSOR-1234" value="<?= htmlspecialchars($_POST['device_id'] ?? '') ?>">
+                </div>
+                <div class="form-group">
                     <label for="address">Address</label>
                     <input type="text" id="address" name="address" placeholder="Your address" required value="<?= htmlspecialchars($_POST['address'] ?? '') ?>">
                 </div>
@@ -109,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="password" id="confirm_password" name="confirm_password" placeholder="Repeat your password" required>
                 </div>
                 <div class="form-group">
+                    <p style="font-size:0.95rem; color:#555; margin-bottom: 14px;">Suggested color theme: Green for agriculture, Blue for water, Brown for soil, and White for a clean dashboard background.</p>
                     <label class="checkbox-label">
                         <input type="checkbox" name="terms" required> I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
                     </label>
