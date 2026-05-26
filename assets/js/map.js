@@ -3,8 +3,12 @@ let map;
 let ownerBoundary;
 let markers = [];
 let currentMapType = 'leaflet';
-let selectedCropFilter = 'all';
+let selectedCropFilters = new Set();
+const cropOptions = ['Rice', 'Wheat', 'Corn', 'Vegetables', 'Fruits'];
 let weatherData = {};
+let planMarker = null;
+let planCircle = null;
+let planLocation = { lat: 27.7172, lng: 85.3240 };
 
 const cropColors = {
     'Rice': '#2E7D32',
@@ -21,6 +25,165 @@ const pesticidesLevel = {
     'warning': { color: '#F39C12', icon: '⚠' },
     'danger': { color: '#E74C3C', icon: '✕' }
 };
+
+function getApiBasePath() {
+    return window.location.pathname.includes('/modules/maps/') ? '../../api/' : '../api/';
+}
+
+function isCropSelected(cropType) {
+    return selectedCropFilters.size === 0 || selectedCropFilters.has(cropType);
+}
+
+function updateFilterButtons() {
+    const filterButtons = document.querySelectorAll('.btn-filter');
+    filterButtons.forEach(btn => {
+        const cropType = btn.getAttribute('data-crop-type');
+        if (!cropType) return;
+        if (cropType === 'all') {
+            btn.classList.toggle('active', selectedCropFilters.size === 0);
+        } else {
+            btn.classList.toggle('active', selectedCropFilters.has(cropType));
+        }
+    });
+}
+
+function updateCropCheckboxes() {
+    const inputs = document.querySelectorAll('#crop-selectors input[type="checkbox"]');
+    inputs.forEach(input => {
+        input.checked = selectedCropFilters.size === 0 || selectedCropFilters.has(input.value);
+    });
+}
+
+function updateSelectedCropLabels() {
+    const selectedLabel = document.getElementById('plan-selected-crops');
+    if (!selectedLabel) return;
+    const crops = selectedCropFilters.size === 0 ? cropOptions : Array.from(selectedCropFilters);
+    selectedLabel.textContent = crops.length ? crops.join(', ') : 'All crops selected';
+}
+
+function createPlanMarker(center) {
+    planLocation = center;
+    planMarker = L.marker([center.lat, center.lng], {
+        draggable: true,
+        title: 'Drag to place cultivation plan',
+        icon: L.divIcon({
+            className: 'plan-marker',
+            html: '<div style="background: #3498DB; border: 2px solid white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;">P</div>'
+        })
+    }).addTo(map);
+
+    planCircle = L.circle([center.lat, center.lng], {
+        radius: 70,
+        color: '#3498DB',
+        fillColor: '#3498DB',
+        fillOpacity: 0.14
+    }).addTo(map);
+
+    planMarker.on('drag', onPlanMarkerMove);
+    planMarker.on('dragend', onPlanMarkerMove);
+    updatePlanDetails();
+}
+
+function onPlanMarkerMove(event) {
+    const latlng = event.target.getLatLng();
+    planLocation = { lat: latlng.lat, lng: latlng.lng };
+    if (planCircle) {
+        planCircle.setLatLng(latlng);
+    }
+    updatePlanDetails();
+}
+
+function updatePlanDetails() {
+    const details = document.getElementById('plan-details');
+    if (!details) return;
+    const selected = selectedCropFilters.size === 0 ? cropOptions : Array.from(selectedCropFilters);
+    details.innerHTML = `
+        <div><strong>Planned cultivation point:</strong> ${planLocation.lat.toFixed(5)}, ${planLocation.lng.toFixed(5)}</div>
+        <div><strong>Selected crops:</strong> ${selected.length ? selected.join(', ') : 'All crops'}</div>
+        <div><strong>Mapped radius:</strong> 70 meters</div>
+    `;
+}
+
+function showPlanStatus(message, type = 'success') {
+    const status = document.getElementById('plan-status');
+    if (!status) return;
+    status.textContent = message;
+    status.style.color = type === 'error' ? '#E74C3C' : '#27AE60';
+}
+
+function toggleCropSelection(cropType) {
+    if (selectedCropFilters.has(cropType)) {
+        selectedCropFilters.delete(cropType);
+    } else {
+        selectedCropFilters.add(cropType);
+    }
+    updateCropCheckboxes();
+    updateFilterButtons();
+    updateSelectedCropLabels();
+    loadFieldMarkers();
+}
+
+function clearSelectedCrops() {
+    selectedCropFilters.clear();
+    updateCropCheckboxes();
+    updateFilterButtons();
+    updateSelectedCropLabels();
+    loadFieldMarkers();
+}
+
+function savePlan() {
+    const signatureName = document.getElementById('plan-signature')?.value.trim() || '';
+    const notes = document.getElementById('plan-notes')?.value.trim() || '';
+    const selectedCrops = selectedCropFilters.size === 0 ? cropOptions : Array.from(selectedCropFilters);
+
+    if (!signatureName) {
+        showPlanStatus('Please enter your name or signature before saving.', 'error');
+        return;
+    }
+    if (!selectedCrops.length) {
+        showPlanStatus('Please select at least one crop to save the plan.', 'error');
+        return;
+    }
+
+    const payload = {
+        signature_name: signatureName,
+        notes: notes,
+        selected_crops: selectedCrops,
+        plan_lat: planLocation.lat,
+        plan_lng: planLocation.lng,
+        plan_area_meters: 70
+    };
+
+    fetch(`${getApiBasePath()}save_plan.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                showPlanStatus('Plan saved successfully with your signature.');
+            } else {
+                showPlanStatus(result.error || 'Unable to save the plan. Please try again.', 'error');
+            }
+        })
+        .catch(() => {
+            showPlanStatus('Unable to reach the server. Check your connection and try again.', 'error');
+        });
+}
+
+function filterByCrop(cropType) {
+    if (cropType === 'all') {
+        selectedCropFilters.clear();
+    } else {
+        selectedCropFilters.clear();
+        selectedCropFilters.add(cropType);
+    }
+    updateFilterButtons();
+    updateCropCheckboxes();
+    updateSelectedCropLabels();
+    loadFieldMarkers();
+}
 
 function initMap() {
     const ownerCenter = [27.7172, 85.3240];
@@ -43,6 +206,10 @@ function initMap() {
     }).addTo(map);
 
     L.marker(ownerCenter).addTo(map).bindPopup('Owner Land Center').openPopup();
+    createPlanMarker({ lat: ownerCenter[0], lng: ownerCenter[1] });
+    updateFilterButtons();
+    updateCropCheckboxes();
+    updateSelectedCropLabels();
 
     loadFieldMarkers();
     loadWeatherData();
@@ -54,7 +221,7 @@ function initMap() {
 }
 
 function loadFieldMarkers() {
-    fetch('fetch_fields.php')
+    fetch(`${getApiBasePath()}fetch_fields.php`)
         .then(res => res.json())
         .then(fields => {
             // Clear existing markers
@@ -62,8 +229,7 @@ function loadFieldMarkers() {
             markers = [];
 
             fields.forEach(field => {
-                // Filter by crop if selected
-                if (selectedCropFilter !== 'all' && field.crop_type !== selectedCropFilter) {
+                    if (!isCropSelected(field.crop_type)) {
                     return;
                 }
 
@@ -125,7 +291,7 @@ function createCustomIcon(cropColor, pesticideStatus) {
 }
 
 function loadWeatherData() {
-    fetch('fetch_weather.php')
+    fetch(`${getApiBasePath()}fetch_weather.php`)
         .then(res => res.json())
         .then(data => {
             weatherData = data;
@@ -198,11 +364,6 @@ function simulateFieldData() {
     ];
 
     feed.innerHTML = data.map(item => `<p>${item}</p>`).join('');
-}
-
-function filterByCrop(cropType) {
-    selectedCropFilter = cropType;
-    loadFieldMarkers();
 }
 
 function toggleMapType(mapType) {

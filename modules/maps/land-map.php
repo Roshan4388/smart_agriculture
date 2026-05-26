@@ -132,6 +132,51 @@ $config = require __DIR__ . '/../../includes/config.php';
             border: 2px solid #ddd;
         }
 
+        .crop-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .crop-selection-grid label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f7f9fc;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .crop-selection-grid input {
+            width: 16px;
+            height: 16px;
+            accent-color: #3498DB;
+        }
+
+        .control-section input[type="text"],
+        .control-section textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 8px;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        .control-section textarea {
+            min-height: 80px;
+        }
+
+        .plan-status {
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
         #realtime-feed {
             background: #f0f7ff;
             padding: 10px;
@@ -212,12 +257,37 @@ $config = require __DIR__ . '/../../includes/config.php';
                     <div class="control-section">
                         <h4>🌾 Filter by Crop</h4>
                         <div class="button-group">
-                            <button class="btn-filter active" onclick="filterByCrop('all')">All Crops</button>
-                            <button class="btn-filter" onclick="filterByCrop('Rice')" style="background: #2E7D32; color: white;">🍚 Rice</button>
-                            <button class="btn-filter" onclick="filterByCrop('Wheat')" style="background: #F4D03F; color: #333;">🌾 Wheat</button>
-                            <button class="btn-filter" onclick="filterByCrop('Corn')" style="background: #F0AD4E; color: white;">🌽 Corn</button>
-                            <button class="btn-filter" onclick="filterByCrop('Vegetables')" style="background: #27AE60; color: white;">🥬 Vegetables</button>
+                            <button class="btn-filter active" data-crop-type="all" onclick="filterByCrop('all')">All Crops</button>
+                            <button class="btn-filter" data-crop-type="Rice" onclick="filterByCrop('Rice')" style="background: #2E7D32; color: white;">🍚 Rice</button>
+                            <button class="btn-filter" data-crop-type="Wheat" onclick="filterByCrop('Wheat')" style="background: #F4D03F; color: #333;">🌾 Wheat</button>
+                            <button class="btn-filter" data-crop-type="Corn" onclick="filterByCrop('Corn')" style="background: #F0AD4E; color: white;">🌽 Corn</button>
+                            <button class="btn-filter" data-crop-type="Vegetables" onclick="filterByCrop('Vegetables')" style="background: #27AE60; color: white;">🥬 Vegetables</button>
                         </div>
+                        <div class="crop-selection-grid" id="crop-selectors">
+                            <label><input type="checkbox" value="Rice" onchange="toggleCropSelection('Rice')"> Rice</label>
+                            <label><input type="checkbox" value="Wheat" onchange="toggleCropSelection('Wheat')"> Wheat</label>
+                            <label><input type="checkbox" value="Corn" onchange="toggleCropSelection('Corn')"> Corn</label>
+                            <label><input type="checkbox" value="Vegetables" onchange="toggleCropSelection('Vegetables')"> Vegetables</label>
+                            <label><input type="checkbox" value="Fruits" onchange="toggleCropSelection('Fruits')"> Fruits</label>
+                        </div>
+                        <button class="btn-action" onclick="clearSelectedCrops()">Clear selection</button>
+                    </div>
+
+                    <div class="control-section">
+                        <h4>📍 Cultivation Plan</h4>
+                        <div id="plan-details">
+                            <div><strong>Planned cultivation point:</strong> 27.71720, 85.32400</div>
+                            <div><strong>Selected crops:</strong> All crops selected</div>
+                            <div><strong>Mapped radius:</strong> 70 meters</div>
+                        </div>
+                    </div>
+
+                    <div class="control-section">
+                        <h4>✍️ Sign & Save Plan</h4>
+                        <input id="plan-signature" type="text" placeholder="Your signature name">
+                        <textarea id="plan-notes" placeholder="Add notes for this cultivation plan"></textarea>
+                        <button class="btn-action" onclick="savePlan()">Save signed plan</button>
+                        <div id="plan-status" class="plan-status"></div>
                     </div>
 
                     <!-- Weather Info -->
