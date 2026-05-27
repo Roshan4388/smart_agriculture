@@ -1065,3 +1065,347 @@ nav {
   margin-bottom: 18px;
   min-height: 24px;
 }
+
+/* Enhanced Smart Agriculture UI */
+body {
+  opacity: 0;
+  transition:
+    opacity 0.5s ease,
+    background 0.4s ease,
+    color 0.4s ease;
+}
+
+body.page-loaded {
+  opacity: 1;
+}
+
+body {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+.main-nav .nav-icon {
+  margin-right: 10px;
+  font-size: 1.05rem;
+}
+
+.secondary-link {
+  color: var(--accent-strong);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.hero-stats,
+.weather-grid,
+.chart-bars,
+.chart-lines,
+.grid-three {
+  display: grid;
+  gap: 16px;
+}
+
+.hero-stats {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-top: 28px;
+}
+
+.stat-card {
+  background: rgba(21, 114, 92, 0.08);
+  border: 1px solid rgba(21, 114, 92, 0.16);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.26);
+}
+
+.stat-card strong {
+  display: block;
+  font-size: 2rem;
+  color: #0f5f3f;
+  margin-bottom: 8px;
+}
+
+.stat-card span {
+  color: #4f706c;
+  font-size: 0.95rem;
+}
+
+.feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background: rgba(18, 116, 125, 0.1);
+  font-size: 1.3rem;
+  margin-bottom: 18px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 2.4vw, 2.4rem);
+}
+
+.feature-panel h3,
+.control-panel h3,
+.chart-card h2 {
+  margin-top: 0;
+  font-size: 1.4rem;
+}
+
+.map-container {
+  min-height: 360px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(19, 116, 125, 0.14);
+  background: #f3fcf8;
+}
+
+.chart-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.chart-card,
+.weather-widget {
+  min-height: 260px;
+}
+
+.chart-lines {
+  padding-top: 18px;
+}
+
+.chart-line {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 40px;
+  border-radius: 999px;
+  padding: 8px 16px;
+  background: rgba(18, 116, 125, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-line::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(18, 116, 125, 0.25),
+    rgba(18, 116, 125, 0.05)
+  );
+  z-index: 0;
+}
+
+.chart-line span,
+.chart-line strong {
+  position: relative;
+  z-index: 1;
+}
+
+.chart-bars {
+  display: grid;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.chart-bars div {
+  display: grid;
+  gap: 8px;
+}
+
+.chart-bars span {
+  display: block;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #09b59e, #1f7f45);
+  transition: width 0.6s ease;
+}
+
+.weather-widget p {
+  margin-top: 20px;
+  color: #455d5a;
+  line-height: 1.8;
+}
+
+.weather-grid {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  margin-top: 18px;
+}
+
+.weather-grid div {
+  background: rgba(24, 164, 152, 0.1);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.weather-grid strong {
+  display: block;
+  font-size: 1.8rem;
+  color: #0f5f3f;
+}
+
+.weather-grid small {
+  color: #4f706c;
+}
+
+.grid-three {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.illustration-glow {
+  position: absolute;
+  left: 20px;
+  top: -10px;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(
+    circle,
+    rgba(18, 116, 125, 0.32),
+    transparent 55%
+  );
+  filter: blur(36px);
+  z-index: 0;
+}
+
+.hero-image {
+  position: relative;
+}
+
+.hero-image img {
+  position: relative;
+  z-index: 1;
+}
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    transform 0.85s ease,
+    opacity 0.85s ease;
+}
+
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.auth-shapes {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(23, 132, 112, 0.16),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(18, 116, 125, 0.12),
+      transparent 18%
+    ),
+    radial-gradient(circle at 50% 80%, rgba(57, 162, 134, 0.1), transparent 20%);
+}
+
+.auth-card {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.auth-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 10% 10%,
+    rgba(22, 149, 132, 0.12),
+    transparent 24%
+  );
+}
+
+.auth-image img {
+  position: relative;
+  z-index: 1;
+}
+
+.form-group input {
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.form-group input:focus {
+  transform: translateY(-1px);
+}
+
+.btn-primary.loading {
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.typed-text {
+  display: inline-block;
+  background: linear-gradient(135deg, #0e7d68, #14c7b9);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: 800;
+}
+
+.typed-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: #0f5f3f;
+  margin-left: 4px;
+  animation: blink 0.8s infinite;
+}

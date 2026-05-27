@@ -6,7 +6,8 @@ requireLogin();
 $config = require __DIR__ . '/includes/config.php';
 $user = getCurrentUser($mysqli);
 
-function fetchCount($mysqli, $query) {
+function fetchCount($mysqli, $query)
+{
     $result = $mysqli->query($query);
     if (!$result) {
         return 0;
@@ -31,6 +32,7 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,10 +41,11 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
     <link rel="stylesheet" href="assets/css/responsive.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
+
 <body>
     <?php include __DIR__ . '/includes/navbar.php'; ?>
     <main class="dashboard-page">
-        <section class="dashboard-section page-top-panel">
+        <section class="dashboard-section page-top-panel scroll-reveal">
             <div class="page-header">
                 <div>
                     <span class="eyebrow">Farmer Dashboard</span>
@@ -53,7 +56,7 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
             </div>
         </section>
 
-        <section class="dashboard-grid sensor-grid">
+        <section class="dashboard-grid sensor-grid scroll-reveal">
             <article class="dashboard-card sensor-card green-card">
                 <span class="sensor-title">Temperature</span>
                 <strong class="sensor-value">24°C</strong>
@@ -86,7 +89,54 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
             </article>
         </section>
 
-        <section class="dashboard-section status-panel">
+        <section class="dashboard-grid chart-grid scroll-reveal">
+            <article class="dashboard-card chart-card">
+                <div class="section-header">
+                    <h2>Soil Moisture Trend</h2>
+                    <span>Live sensor values</span>
+                </div>
+                <div class="chart-lines">
+                    <div class="chart-line" style="width: 78%;">78%</div>
+                    <div class="chart-line" style="width: 64%;">64%</div>
+                    <div class="chart-line" style="width: 42%;">42%</div>
+                    <div class="chart-line" style="width: 55%;">55%</div>
+                </div>
+            </article>
+            <article class="dashboard-card chart-card">
+                <div class="section-header">
+                    <h2>Temperature & Humidity</h2>
+                    <span>Plant comfort range</span>
+                </div>
+                <div class="chart-bars">
+                    <div><strong>Temp</strong><span style="width: 68%;"></span></div>
+                    <div><strong>Humidity</strong><span style="width: 82%;"></span></div>
+                    <div><strong>Soil</strong><span style="width: 48%;"></span></div>
+                </div>
+            </article>
+            <article class="dashboard-card weather-widget">
+                <div class="section-header">
+                    <h2>Weather Widget</h2>
+                    <span><?= htmlspecialchars($currentWeather['condition']) ?></span>
+                </div>
+                <div class="weather-grid">
+                    <div>
+                        <strong><?= htmlspecialchars($currentWeather['temperature']) ?>°C</strong>
+                        <small>Temperature</small>
+                    </div>
+                    <div>
+                        <strong><?= htmlspecialchars($currentWeather['humidity']) ?>%</strong>
+                        <small>Humidity</small>
+                    </div>
+                    <div>
+                        <strong><?= htmlspecialchars($currentWeather['rainfall']) ?>%</strong>
+                        <small>Rain chance</small>
+                    </div>
+                </div>
+                <p><?= htmlspecialchars($currentWeather['recommendation']) ?></p>
+            </article>
+        </section>
+
+        <section class="dashboard-section status-panel scroll-reveal">
             <div class="section-header">
                 <h2>Alert Center</h2>
             </div>
@@ -98,7 +148,7 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
             </div>
         </section>
 
-        <section class="dashboard-grid farmer-grid">
+        <section class="dashboard-grid farmer-grid scroll-reveal">
             <article class="dashboard-card control-panel">
                 <h3>Farmer Control Panel</h3>
                 <div class="control-grid">
@@ -147,7 +197,7 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
             </article>
         </section>
 
-        <section class="dashboard-section map-panel">
+        <section class="dashboard-section map-panel scroll-reveal">
             <div class="section-header">
                 <h2>3D Farm Visualization</h2>
                 <a class="secondary-link" href="modules/maps/land-map.php">View Interactive Map</a>
@@ -160,4 +210,5 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
     <script src="assets/js/map.js"></script>
     <script src="assets/js/alert.js"></script>
 </body>
+
 </html>

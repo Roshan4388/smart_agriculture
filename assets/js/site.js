@@ -1,44 +1,91 @@
-document.addEventListener('DOMContentLoaded', function () {
-    document.body.classList.add('loaded');
+const body = document.body;
+const themeToggleButtons = document.querySelectorAll(".theme-toggle");
+const typedElements = document.querySelectorAll(".typed-text");
+const scrollRevealItems = document.querySelectorAll(".scroll-reveal");
 
-    const nav = document.querySelector('.main-nav');
-    const topBtn = document.createElement('button');
-    topBtn.className = 'back-to-top';
-    topBtn.type = 'button';
-    topBtn.title = 'Scroll to top';
-    topBtn.innerText = '↑';
-    document.body.appendChild(topBtn);
+function applyTheme(theme) {
+  body.classList.toggle("dark-mode", theme === "dark");
+  localStorage.setItem("smartAgTheme", theme);
+  themeToggleButtons.forEach((button) => {
+    button.textContent = theme === "dark" ? "☀️ Light mode" : "🌙 Dark mode";
+  });
+}
 
-    function updateNav() {
-        const y = window.scrollY;
-        if (nav) {
-            nav.classList.toggle('scrolled', y > 20);
-        }
-        topBtn.classList.toggle('visible', y > 320);
+function loadTheme() {
+  const savedTheme = localStorage.getItem("smartAgTheme");
+  if (savedTheme) {
+    applyTheme(savedTheme);
+    return;
+  }
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(prefersDark ? "dark" : "light");
+}
+
+function revealOnScroll(entries) {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible");
+    }
+  });
+}
+
+function initScrollReveal() {
+  if (!window.IntersectionObserver) {
+    scrollRevealItems.forEach((item) => item.classList.add("visible"));
+    return;
+  }
+  const observer = new IntersectionObserver(revealOnScroll, {
+    threshold: 0.18,
+  });
+  scrollRevealItems.forEach((item) => observer.observe(item));
+}
+
+function initTyping() {
+  typedElements.forEach((el) => {
+    const typedString = el.dataset.typed || "";
+    const lines = typedString
+      .split(";")
+      .map((line) => line.trim())
+      .filter(Boolean);
+    let currentLine = 0;
+    let currentIndex = 0;
+
+    if (!lines.length) {
+      return;
     }
 
-    updateNav();
-    window.addEventListener('scroll', updateNav, { passive: true });
+    const cursor = document.createElement("span");
+    cursor.className = "typed-cursor";
+    el.after(cursor);
 
-    const themeButtons = document.querySelectorAll('.theme-toggle');
-    const currentTheme = localStorage.getItem('farm-theme');
-    if (currentTheme === 'dark') {
-        document.body.classList.add('dark-mode');
+    function typeText() {
+      const line = lines[currentLine];
+      el.textContent = line.slice(0, currentIndex);
+      if (currentIndex <= line.length) {
+        currentIndex += 1;
+        setTimeout(typeText, 70);
+        return;
+      }
+      setTimeout(() => {
+        currentIndex = 0;
+        currentLine = (currentLine + 1) % lines.length;
+        setTimeout(typeText, 1200);
+      }, 1400);
     }
 
-    themeButtons.forEach(btn => {
-        btn.addEventListener('click', function () {
-            document.body.classList.toggle('dark-mode');
-            const activeTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-            localStorage.setItem('farm-theme', activeTheme);
-            btn.textContent = activeTheme === 'dark' ? '☀️ Light mode' : '🌙 Dark mode';
-        });
-        if (document.body.classList.contains('dark-mode')) {
-            btn.textContent = '☀️ Light mode';
-        }
-    });
+    typeText();
+  });
+}
 
-    topBtn.addEventListener('click', function () {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+document.addEventListener("DOMContentLoaded", () => {
+  body.classList.add("page-loaded");
+  loadTheme();
+  initTyping();
+  initScrollReveal();
+  themeToggleButtons.forEach((button) =>
+    button.addEventListener("click", () => {
+      const nextTheme = body.classList.contains("dark-mode") ? "light" : "dark";
+      applyTheme(nextTheme);
+    }),
+  );
 });
