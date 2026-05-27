@@ -657,6 +657,7 @@ nav {
     box-shadow: none;
     background: rgba(6, 57, 64, 0.94);
     height: auto;
+    z-index: 9999;
   }
 
   .dashboard-page {
@@ -1285,8 +1286,9 @@ body {
 }
 
 .scroll-reveal {
-  opacity: 0;
-  transform: translateY(28px);
+  opacity: 1; /* avoid content hidden if JS scroll reveal isn't running */
+  transform: none;
+
   transition:
     transform 0.85s ease,
     opacity 0.85s ease;
