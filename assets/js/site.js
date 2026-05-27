@@ -89,14 +89,20 @@ function initTyping() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  body.classList.add("page-loaded");
-  loadTheme();
-  initTyping();
-  initScrollReveal();
-  themeToggleButtons.forEach((button) =>
-    button.addEventListener("click", () => {
-      const nextTheme = body.classList.contains("dark-mode") ? "light" : "dark";
-      applyTheme(nextTheme);
-    }),
-  );
+  try {
+    body.classList.add("page-loaded");
+    loadTheme();
+    initTyping();
+    initScrollReveal();
+    themeToggleButtons.forEach((button) =>
+      button.addEventListener("click", () => {
+        const nextTheme = body.classList.contains("dark-mode")
+          ? "light"
+          : "dark";
+        applyTheme(nextTheme);
+      }),
+    );
+  } catch (error) {
+    console.warn("Smart Agriculture UI initialization warning:", error);
+  }
 });
