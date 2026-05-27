@@ -658,6 +658,12 @@ nav {
     background: rgba(6, 57, 64, 0.94);
     height: auto;
   }
+
+  .dashboard-page {
+    margin-left: 0;
+    padding-top: 120px; /* ensure content starts below the nav on small screens */
+  }
+
   .main-nav ul {
     flex-direction: row;
     flex-wrap: wrap;
