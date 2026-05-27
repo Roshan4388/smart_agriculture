@@ -191,7 +191,7 @@ nav {
   max-width: 1180px;
   margin: 24px auto;
   padding: 0 20px;
-  margin-left: 0;
+  margin-left: 260px; /* sidebar width (main-nav is fixed) */
 }
 
 /* Auth pages should center normally without a hidden sidebar */
