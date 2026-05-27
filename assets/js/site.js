@@ -35,9 +35,20 @@ function initScrollReveal() {
     return;
   }
   const observer = new IntersectionObserver(revealOnScroll, {
-    threshold: 0.18,
+    threshold: 0.12,
+    rootMargin: "0px 0px -50px 0px",
   });
   scrollRevealItems.forEach((item) => observer.observe(item));
+
+  // Immediately reveal items already in viewport
+  setTimeout(() => {
+    scrollRevealItems.forEach((item) => {
+      const rect = item.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        item.classList.add("visible");
+      }
+    });
+  }, 50);
 }
 
 function initTyping() {

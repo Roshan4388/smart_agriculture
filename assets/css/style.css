@@ -191,7 +191,7 @@ nav {
   max-width: 1180px;
   margin: 24px auto;
   padding: 0 20px;
-  margin-left: 300px;
+  margin-left: 0;
 }
 
 /* Auth pages should center normally without a hidden sidebar */
@@ -1068,18 +1068,6 @@ nav {
 
 /* Enhanced Smart Agriculture UI */
 body {
-  opacity: 0;
-  transition:
-    opacity 0.5s ease,
-    background 0.4s ease,
-    color 0.4s ease;
-}
-
-body.page-loaded {
-  opacity: 1;
-}
-
-body {
   font-family:
     "Inter",
     system-ui,
@@ -1087,6 +1075,9 @@ body {
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
+  transition:
+    background 0.4s ease,
+    color 0.4s ease;
 }
 
 .main-nav .nav-icon {
