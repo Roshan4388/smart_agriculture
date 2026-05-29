@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../includes/session.php';
 require_once __DIR__ . '/../../includes/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
+require_once __DIR__ . '/crop-data.php';
 requireLogin();
 $config = require __DIR__ . '/../../includes/config.php';
 
@@ -9,14 +10,20 @@ $cropId = intval($_GET['id'] ?? 0);
 $crop = null;
 if ($cropId > 0) {
     $stmt = $mysqli->prepare('SELECT id, name, season, soil_type, expected_yield, description, tips FROM crops WHERE id = ? LIMIT 1');
-    $stmt->bind_param('i', $cropId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $crop = $result->fetch_assoc();
+    if ($stmt) {
+        $stmt->bind_param('i', $cropId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $crop = $result->fetch_assoc();
+    }
+    if (!$crop) {
+        $crop = findStaticCropProfileById($cropId);
+    }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,6 +31,7 @@ if ($cropId > 0) {
     <link rel="stylesheet" href="../../assets/css/style.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css">
 </head>
+
 <body>
     <?php include __DIR__ . '/../../includes/navbar.php'; ?>
     <main class="dashboard-page">
@@ -46,4 +54,5 @@ if ($cropId > 0) {
         </section>
     </main>
 </body>
+
 </html>

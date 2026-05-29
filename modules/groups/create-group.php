@@ -12,18 +12,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $landMode = $_POST['land_mode'] ?? 'own';
+    $ownerRole = $_POST['owner_role'] ?? '';
     $validLandModes = ['own', 'virtual'];
+    $validRoles = ['farmer', 'expert', 'market_member', 'assistant'];
 
     if (!$name) {
         $error = 'Please enter a group name.';
     } elseif (!in_array($landMode, $validLandModes, true)) {
         $error = 'Please select a valid land option.';
+    } elseif ($ownerRole !== '' && !in_array($ownerRole, $validRoles, true)) {
+        $error = 'Please select a valid group role.';
     } else {
-        $ownerRole = 'farmer';
-        if (!empty($user['experience'])) {
-            $ownerRole = 'expert';
-        } elseif ($user['role'] === 'admin') {
-            $ownerRole = 'assistant';
+        if ($ownerRole === '') {
+            $ownerRole = 'farmer';
+            if (!empty($user['experience'])) {
+                $ownerRole = 'expert';
+            } elseif ($user['role'] === 'admin') {
+                $ownerRole = 'assistant';
+            }
         }
 
         $stmt = $mysqli->prepare('INSERT INTO user_groups (name, owner_user_id, owner_role, description, land_mode, created_at) VALUES (?, ?, ?, ?, ?, NOW())');
@@ -43,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../../assets/css/style.css">
     <link rel="stylesheet" href="../../assets/css/responsive.css">
 </head>
+
 <body>
     <?php include __DIR__ . '/../../includes/navbar.php'; ?>
     <main class="dashboard-page">
@@ -78,6 +86,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option value="virtual" <?= ($_POST['land_mode'] ?? '') === 'virtual' ? 'selected' : '' ?>>Virtual Land</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="owner_role">Owner Role</label>
+                    <select id="owner_role" name="owner_role">
+                        <option value="farmer" <?= ($_POST['owner_role'] ?? '') === 'farmer' ? 'selected' : '' ?>>Farmer</option>
+                        <option value="expert" <?= ($_POST['owner_role'] ?? '') === 'expert' ? 'selected' : '' ?>>Expert</option>
+                        <option value="market_member" <?= ($_POST['owner_role'] ?? '') === 'market_member' ? 'selected' : '' ?>>Market Member</option>
+                        <option value="assistant" <?= ($_POST['owner_role'] ?? '') === 'assistant' ? 'selected' : '' ?>>Assistant</option>
+                    </select>
+                </div>
                 <div class="form-actions">
                     <button type="submit" class="btn-primary">Create Group</button>
                 </div>
@@ -85,4 +102,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </section>
     </main>
 </body>
+
 </html>

@@ -14,6 +14,14 @@ $baseUrl = $config['base_url'];
         <li><a href="<?= $baseUrl ?>/dashboard.php"><span class="nav-icon">📊</span>Dashboard</a></li>
         <li><a href="<?= $baseUrl ?>/modules/maps/land-map.php"><span class="nav-icon">🗺️</span>Land Map</a></li>
         <li><a href="<?= $baseUrl ?>/modules/crops/recommendation.php"><span class="nav-icon">🌱</span>Crop Monitoring</a></li>
+        <li><a href="<?= $baseUrl ?>/modules/crops/crop-list.php"><span class="nav-icon">📚</span>Crop Library</a></li>
+        <li><a href="<?= $baseUrl ?>/diseases.php"><span class="nav-icon">🦠</span>Disease Guide</a></li>
+        <li><a href="<?= $baseUrl ?>/modules/experts/consultation.php"><span class="nav-icon">👨‍🌾</span>Expert Consult</a></li>
+        <li><a href="<?= $baseUrl ?>/modules/groups/groups.php"><span class="nav-icon">👥</span>Farmer Groups</a></li>
+        <li><a href="<?= $baseUrl ?>/modules/marketplace/products.php"><span class="nav-icon">🛒</span>View Marketplace</a></li>
+        <li><a href="<?= $baseUrl ?>/modules/groups/expert-groups.php"><span class="nav-icon">🧑‍🏫</span>Expert Groups</a></li>
+        <li><a href="<?= $baseUrl ?>/market-status.php"><span class="nav-icon">📊</span>Market Status</a></li>
+        <li><a href="<?= $baseUrl ?>/market-assistant.php"><span class="nav-icon">🤝</span>Market Assistant</a></li>
         <li><a href="<?= $baseUrl ?>/weather-forecast.php"><span class="nav-icon">☀️</span>Weather</a></li>
         <li><a href="<?= $baseUrl ?>/reports.php"><span class="nav-icon">📈</span>Reports</a></li>
         <?php if (isset($_SESSION['user_id'])) : ?>

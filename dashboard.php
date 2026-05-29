@@ -38,6 +38,7 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - <?= htmlspecialchars($config['app_name']) ?></title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
@@ -45,14 +46,81 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
 <body>
     <?php include __DIR__ . '/includes/navbar.php'; ?>
     <main class="dashboard-page">
-        <section class="dashboard-section page-top-panel scroll-reveal">
-            <div class="page-header">
-                <div>
-                    <span class="eyebrow">Farmer Dashboard</span>
-                    <h1>Monitor your farm in one place</h1>
-                    <p>Temperature, humidity, soil moisture, water level, crop health and weather status are all updated in real time for smarter decisions.</p>
+        <section class="dashboard-section hero-panel scroll-reveal">
+            <div class="hero-panel-inner">
+                <div class="hero-copy">
+                    <div class="hero-copy-header">
+                        <div>
+                            <span class="eyebrow">Precision AI</span>
+                            <h1>Transform farming with precision AI</h1>
+                            <p>Actionable field intelligence for crop health, irrigation automation, weather prediction, pest detection, and marketplace growth.</p>
+                        </div>
+                        <button class="theme-toggle">🌙 Dark mode</button>
+                    </div>
+
+                    <div class="hero-actions">
+                        <a href="irrigation-control.php" class="btn-primary">Start Monitoring</a>
+                        <a href="modules/maps/land-map.php" class="btn-secondary">Explore Land Map</a>
+                    </div>
+
+                    <div class="hero-stats">
+                        <article class="stat-card">
+                            <span class="stat-icon">⟳</span>
+                            <strong>24/7</strong>
+                            <small>Real-time sensor updates</small>
+                        </article>
+                        <article class="stat-card">
+                            <span class="stat-icon">⚙️</span>
+                            <strong>8</strong>
+                            <small>AI-powered farming tools</small>
+                        </article>
+                        <article class="stat-card">
+                            <span class="stat-icon">💧</span>
+                            <strong>95%</strong>
+                            <small>Precision irrigation accuracy</small>
+                        </article>
+                        <article class="stat-card">
+                            <span class="stat-icon">📈</span>
+                            <strong>12k</strong>
+                            <small>Insights delivered monthly</small>
+                        </article>
+                    </div>
                 </div>
-                <button class="theme-toggle">🌙 Dark mode</button>
+
+                <div class="hero-visual">
+                    <div class="visual-card">
+                        <div class="visual-overlay">
+                            <span>Live farm map</span>
+                            <strong>4 active zones</strong>
+                        </div>
+                        <div class="visual-pattern pattern-1"></div>
+                        <div class="visual-pattern pattern-2"></div>
+                        <div class="visual-pattern pattern-3"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-section quicklinks-panel scroll-reveal">
+            <div class="section-header">
+                <div>
+                    <span class="eyebrow">Quick Access</span>
+                    <h2>Tap a section to see its details</h2>
+                </div>
+                <p>Choose a farming workflow area and get the right tools, data, or marketplace page instantly.</p>
+            </div>
+            <div class="section-card-grid">
+                <button type="button" class="section-card active" data-section="expert-consult">Expert Consult</button>
+                <button type="button" class="section-card" data-section="farmer-groups">Farmer Group</button>
+                <button type="button" class="section-card" data-section="view-marketplace">View Marketplace</button>
+                <button type="button" class="section-card" data-section="expert-groups">Expert Groups</button>
+                <button type="button" class="section-card" data-section="market-status">Market Status</button>
+                <button type="button" class="section-card" data-section="market-assistant">Market Assistant</button>
+            </div>
+            <div class="section-details" id="section-details">
+                <h2 id="section-detail-title">Expert Consult</h2>
+                <p id="section-detail-copy">Submit a consultation request and connect with agriculture specialists for crop planning, pest management, and market advice.</p>
+                <a id="section-detail-link" class="btn-secondary" href="modules/experts/consultation.php">Open Expert Consult</a>
             </div>
         </section>
 
@@ -209,6 +277,59 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="assets/js/map.js"></script>
     <script src="assets/js/alert.js"></script>
+    <script>
+        const sectionInfo = {
+            'expert-consult': {
+                title: 'Expert Consult',
+                copy: 'Submit a consultation request and connect with agriculture specialists for crop planning, pest control, and market guidance.',
+                href: 'modules/experts/consultation.php'
+            },
+            'farmer-groups': {
+                title: 'Farmer Group',
+                copy: 'Join or manage farmer groups to collaborate on land planning, shared crop sales, and field insights.',
+                href: 'modules/groups/groups.php'
+            },
+            'view-marketplace': {
+                title: 'View Marketplace',
+                copy: 'Browse marketplace listings, add products, and manage your buyer connections in one place.',
+                href: 'modules/marketplace/products.php'
+            },
+            'expert-groups': {
+                title: 'Expert Groups',
+                copy: 'Explore groups led by agriculture experts and access specialized support for farm decisions.',
+                href: 'modules/groups/expert-groups.php'
+            },
+            'market-status': {
+                title: 'Market Status',
+                copy: 'Review current market demand, price signals, and assistant recommendations for your produce.',
+                href: 'market-status.php'
+            },
+            'market-assistant': {
+                title: 'Market Assistant',
+                copy: 'Use marketplace assistant tools to select buyer roles, compare prices, and prepare products for sale.',
+                href: 'market-assistant.php'
+            }
+        };
+
+        const cards = document.querySelectorAll('.section-card');
+        const detailTitle = document.getElementById('section-detail-title');
+        const detailCopy = document.getElementById('section-detail-copy');
+        const detailLink = document.getElementById('section-detail-link');
+
+        function showSection(key) {
+            const info = sectionInfo[key];
+            if (!info) return;
+            cards.forEach(card => card.classList.toggle('active', card.dataset.section === key));
+            detailTitle.textContent = info.title;
+            detailCopy.textContent = info.copy;
+            detailLink.href = info.href;
+            detailLink.textContent = `Go to ${info.title}`;
+        }
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => showSection(card.dataset.section));
+        });
+    </script>
 </body>
 
 </html>
