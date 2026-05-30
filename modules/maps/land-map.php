@@ -363,13 +363,14 @@ $config = require __DIR__ . '/../../includes/config.php';
                             <button class="btn-filter" data-crop-type="Wheat" onclick="filterByCrop('Wheat')" style="background: #F4D03F; color: #333;">🌾 Wheat</button>
                             <button class="btn-filter" data-crop-type="Corn" onclick="filterByCrop('Corn')" style="background: #F0AD4E; color: white;">🌽 Corn</button>
                             <button class="btn-filter" data-crop-type="Vegetables" onclick="filterByCrop('Vegetables')" style="background: #27AE60; color: white;">🥬 Vegetables</button>
+                            <button class="btn-filter" data-crop-type="Fruits" onclick="filterByCrop('Fruits')" style="background: #E74C3C; color: white;">Fruits</button>
                         </div>
                         <div class="crop-selection-grid" id="crop-selectors">
-                            <label><input type="checkbox" value="Rice" onchange="toggleCropSelection('Rice')"> Rice</label>
-                            <label><input type="checkbox" value="Wheat" onchange="toggleCropSelection('Wheat')"> Wheat</label>
-                            <label><input type="checkbox" value="Corn" onchange="toggleCropSelection('Corn')"> Corn</label>
-                            <label><input type="checkbox" value="Vegetables" onchange="toggleCropSelection('Vegetables')"> Vegetables</label>
-                            <label><input type="checkbox" value="Fruits" onchange="toggleCropSelection('Fruits')"> Fruits</label>
+                            <label><input type="radio" name="crop_filter" value="Rice" onchange="filterByCrop(this.value)"> Rice</label>
+                            <label><input type="radio" name="crop_filter" value="Wheat" onchange="filterByCrop(this.value)"> Wheat</label>
+                            <label><input type="radio" name="crop_filter" value="Corn" onchange="filterByCrop(this.value)"> Corn</label>
+                            <label><input type="radio" name="crop_filter" value="Vegetables" onchange="filterByCrop(this.value)"> Vegetables</label>
+                            <label><input type="radio" name="crop_filter" value="Fruits" onchange="filterByCrop(this.value)"> Fruits</label>
                         </div>
                         <button class="btn-action" onclick="clearSelectedCrops()">Clear selection</button>
                     </div>

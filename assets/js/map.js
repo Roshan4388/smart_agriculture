@@ -132,9 +132,9 @@ function updateLegendSelections() {
 }
 
 function updateCropCheckboxes() {
-    const inputs = document.querySelectorAll('#crop-selectors input[type="checkbox"]');
+    const inputs = document.querySelectorAll('#crop-selectors input[name="crop_filter"]');
     inputs.forEach(input => {
-        input.checked = selectedCropFilters.size === 0 || selectedCropFilters.has(input.value);
+        input.checked = selectedCropFilters.has(input.value);
     });
 }
 
@@ -403,6 +403,7 @@ function toggleCropSelection(cropType) {
     if (selectedCropFilters.has(cropType)) {
         selectedCropFilters.delete(cropType);
     } else {
+        selectedCropFilters.clear();
         selectedCropFilters.add(cropType);
     }
     refreshSelectionControls();
