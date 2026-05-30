@@ -45,8 +45,17 @@ body.dark-mode {
   color: #d6e7eb;
   background: #081116;
 }
+body.green-mode {
+  background:
+    radial-gradient(circle at top left, rgba(45, 151, 95, 0.24), transparent 28%),
+    linear-gradient(180deg, #e1f6e8 0%, #f4fbef 48%, #f8fbff 100%);
+  color: #143226;
+}
 body.dark-mode .main-nav {
   background: rgba(5, 19, 25, 0.95);
+}
+body.green-mode .main-nav {
+  background: rgba(13, 89, 48, 0.94);
 }
 body.dark-mode .dashboard-card,
 body.dark-mode .dashboard-section,
@@ -60,6 +69,9 @@ body.dark-mode .main-nav a {
 }
 body.dark-mode .main-nav a:hover {
   background: rgba(16, 124, 148, 0.2);
+}
+body.green-mode .main-nav a:hover {
+  background: rgba(205, 255, 224, 0.16);
 }
 body.dark-mode .btn-primary {
   background: linear-gradient(135deg, #17f3df, #0d9582);

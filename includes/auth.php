@@ -27,7 +27,7 @@ function getCurrentUser($mysqli) {
         return null;
     }
 
-    $stmt = $mysqli->prepare('SELECT id, name, email, role, experience FROM users WHERE id = ?');
+    $stmt = $mysqli->prepare('SELECT id, name, email, phone, address, role, experience, agriculture_field FROM users WHERE id = ?');
     $stmt->bind_param('i', $_SESSION['user_id']);
     $stmt->execute();
     $result = $stmt->get_result();

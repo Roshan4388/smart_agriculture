@@ -3,10 +3,24 @@ const themeToggleButtons = document.querySelectorAll(".theme-toggle");
 const scrollRevealItems = document.querySelectorAll(".scroll-reveal");
 
 function applyTheme(theme) {
-  body.classList.toggle("dark-mode", theme === "dark");
-  localStorage.setItem("smartAgTheme", theme);
+  const resolvedTheme =
+    theme === "auto"
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light"
+      : theme;
+
+  body.classList.toggle("dark-mode", resolvedTheme === "dark");
+  body.classList.toggle("green-mode", resolvedTheme === "green");
+
+  if (theme === "auto") {
+    localStorage.removeItem("smartAgTheme");
+  } else {
+    localStorage.setItem("smartAgTheme", theme);
+  }
+
   themeToggleButtons.forEach((button) => {
-    button.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+    button.textContent = resolvedTheme === "dark" ? "Light mode" : "Dark mode";
   });
 }
 

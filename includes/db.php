@@ -30,6 +30,25 @@ if ($agricultureFieldColumn && $agricultureFieldColumn->num_rows === 0) {
     $mysqli->query("ALTER TABLE users ADD COLUMN agriculture_field VARCHAR(100) DEFAULT NULL");
 }
 
+$mysqli->query("CREATE TABLE IF NOT EXISTS user_settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    setting_key VARCHAR(80) NOT NULL,
+    setting_value TEXT DEFAULT NULL,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_user_setting (user_id, setting_key),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+$mysqli->query("CREATE TABLE IF NOT EXISTS support_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    message TEXT NOT NULL,
+    status VARCHAR(80) NOT NULL DEFAULT 'Open',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
 $mysqli->query("CREATE TABLE IF NOT EXISTS otp_codes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
