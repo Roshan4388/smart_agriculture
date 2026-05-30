@@ -13,13 +13,39 @@ $config = require __DIR__ . '/includes/config.php';
     <link rel="stylesheet" href="assets/css/responsive.css">
 </head>
 
-<body>
+<body class="friendly-farm-bg">
     <?php include __DIR__ . '/includes/navbar.php'; ?>
     <main class="dashboard-page home-page">
-        <section class="dashboard-section panel-3d">
+        <section class="dashboard-section panel-3d about-friendly-hero">
             <div class="section-header">
-                <h1>About Smart Agriculture</h1>
-                <p>Smart Agriculture combines modern data-driven farming tools with traditional field experience.</p>
+                <div>
+                    <span class="eyebrow">Friendly farm dashboard</span>
+                    <h1>About Smart Agriculture</h1>
+                    <p>Smart Agriculture combines modern data-driven farming tools with traditional field experience.</p>
+                </div>
+            </div>
+
+            <div class="friendly-dashboard">
+                <article class="friendly-dashboard-card harvest-card">
+                    <span class="dashboard-label">Crop Health</span>
+                    <strong>Good</strong>
+                    <p>Daily crop checks, disease alerts, and field notes in one simple view.</p>
+                </article>
+                <article class="friendly-dashboard-card water-card">
+                    <span class="dashboard-label">Water Level</span>
+                    <strong>72%</strong>
+                    <p>Friendly irrigation signals help farmers save water and protect plants.</p>
+                </article>
+                <article class="friendly-dashboard-card weather-card">
+                    <span class="dashboard-label">Weather</span>
+                    <strong>Clear</strong>
+                    <p>Local weather guidance supports smarter planting and harvest decisions.</p>
+                </article>
+                <article class="friendly-dashboard-card market-card">
+                    <span class="dashboard-label">Market</span>
+                    <strong>Active</strong>
+                    <p>Track price signals and connect farm products with nearby buyers.</p>
+                </article>
             </div>
 
             <div class="content-grid">

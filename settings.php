@@ -47,26 +47,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['section'])) {
     <style>
         .settings-grid {
             display: grid;
-            grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
-            gap: 24px;
+            grid-template-columns: minmax(210px, 260px) minmax(0, 1fr);
+            gap: 20px;
             margin-top: 24px;
+            align-items: start;
         }
 
         .settings-menu {
             display: grid;
-            gap: 14px;
+            gap: 10px;
+            position: sticky;
+            top: 24px;
         }
 
         .settings-menu a,
         .settings-menu button {
-            display: block;
+            display: flex;
+            align-items: center;
             width: 100%;
             text-align: left;
-            padding: 16px 18px;
-            border-radius: 16px;
+            min-height: 46px;
+            padding: 11px 14px;
+            border-radius: 12px;
             border: 1px solid rgba(28, 40, 52, 0.15);
             background: #ffffff;
             color: #14282d;
+            font-size: 0.95rem;
             font-weight: 700;
             text-decoration: none;
             transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
@@ -83,18 +89,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['section'])) {
         .settings-section {
             background: rgba(255, 255, 255, 0.92);
             border: 1px solid rgba(28, 40, 52, 0.08);
-            border-radius: 20px;
-            padding: 24px;
+            border-radius: 16px;
+            padding: 20px;
             box-shadow: 0 16px 30px rgba(16, 58, 72, 0.06);
         }
 
         .settings-section+.settings-section {
-            margin-top: 20px;
+            margin-top: 16px;
         }
 
         .settings-section h2 {
             margin-top: 0;
-            font-size: 1.25rem;
+            margin-bottom: 10px;
+            font-size: 1.15rem;
         }
 
         .settings-card {
@@ -109,14 +116,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['section'])) {
 
         .settings-form {
             display: grid;
-            gap: 16px;
-            margin-top: 16px;
+            gap: 12px;
+            margin-top: 14px;
         }
 
         .settings-form label {
             display: block;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .settings-form input,
@@ -132,8 +139,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['section'])) {
             box-sizing: border-box;
         }
 
+        .settings-form input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0 10px 0 0;
+            vertical-align: middle;
+            accent-color: #12747d;
+        }
+
+        .settings-form label:has(input[type="checkbox"]) {
+            display: flex;
+            align-items: center;
+            min-height: 38px;
+            margin-bottom: 0;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: #f7fbfc;
+        }
+
         .settings-form textarea {
-            min-height: 120px;
+            min-height: 96px;
             resize: vertical;
         }
 
@@ -166,6 +191,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['section'])) {
         @media (max-width: 920px) {
             .settings-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .settings-menu {
+                position: static;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             }
         }
     </style>
