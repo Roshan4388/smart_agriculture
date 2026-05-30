@@ -218,6 +218,63 @@ $config = require __DIR__ . '/../../includes/config.php';
             border-color: #999;
         }
 
+        .map-mode-toggle {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .map-mode-toggle button.active,
+        .btn-action.active {
+            background: #12747d;
+            color: #fff;
+        }
+
+        .selection-panel {
+            background: #f6fbfc;
+            border: 1px solid #d8eaef;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .selection-panel strong {
+            display: block;
+            color: #14383d;
+            margin-bottom: 4px;
+        }
+
+        .test-result {
+            margin-top: 10px;
+            border-radius: 8px;
+            padding: 10px;
+            background: #eef9f2;
+            border-left: 4px solid #27AE60;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .test-result.warning {
+            background: #fff8e8;
+            border-left-color: #F39C12;
+        }
+
+        .test-result.danger {
+            background: #fff2f2;
+            border-left-color: #E74C3C;
+        }
+
+        .element-list {
+            display: grid;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .element-list button {
+            text-align: left;
+        }
+
         @media (max-width: 1024px) {
             .map-container {
                 flex-direction: column;
@@ -253,6 +310,34 @@ $config = require __DIR__ . '/../../includes/config.php';
 
                 <!-- Controls Panel -->
                 <div class="controls-panel">
+                    <div class="control-section">
+                        <h4>Map Mode</h4>
+                        <div class="map-mode-toggle">
+                            <button class="btn-action active" id="real-mode-btn" type="button" onclick="setMapMode('real')">Real</button>
+                            <button class="btn-action" id="virtual-mode-btn" type="button" onclick="setMapMode('virtual')">Virtual</button>
+                        </div>
+                    </div>
+
+                    <div class="control-section">
+                        <h4>Selected Element</h4>
+                        <div id="selected-element" class="selection-panel">
+                            <strong>No element selected</strong>
+                            Click a field, boundary, or plan area on the map.
+                        </div>
+                        <div class="button-group" style="margin-top: 10px;">
+                            <button class="btn-action" type="button" onclick="testSelectedElement()">Test selected element</button>
+                            <button class="btn-action" type="button" onclick="testAllElements()">Test all visible elements</button>
+                        </div>
+                        <div id="element-test-result" class="test-result" style="display: none;"></div>
+                    </div>
+
+                    <div class="control-section">
+                        <h4>Map Elements</h4>
+                        <div id="map-element-list" class="element-list">
+                            <button class="btn-action" type="button">Loading elements...</button>
+                        </div>
+                    </div>
+
                     <!-- Crop Filter -->
                     <div class="control-section">
                         <h4>🌾 Filter by Crop</h4>

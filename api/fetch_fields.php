@@ -1,38 +1,10 @@
 <?php
 header('Content-Type: application/json');
-require_once '../includes/config.php';
+require_once __DIR__ . '/../includes/db.php';
 
-// Fetch fields with pesticide and crop data
-$query = "
-    SELECT 
-        f.id, 
-        f.field_name, 
-        f.latitude, 
-        f.longitude, 
-        f.area,
-        c.crop_name as crop_type,
-        f.soil_humidity,
-        f.temperature,
-        f.crop_health,
-        CASE 
-            WHEN f.pesticide_level > 80 THEN 'danger'
-            WHEN f.pesticide_level > 50 THEN 'warning'
-            ELSE 'normal'
-        END as pesticide_level,
-        f.pesticide_level as pesticide_value,
-        f.last_updated
-    FROM fields f
-    LEFT JOIN crops c ON f.crop_id = c.id
-    ORDER BY f.field_name
-";
-
-try {
-    $result = $pdo->query($query);
-    $fields = $result->fetchAll(PDO::FETCH_ASSOC);
-    
-    // If no database records, return sample data
-    if (empty($fields)) {
-        $fields = [
+function sampleFields(): array
+{
+    return [
             [
                 'id' => 1,
                 'field_name' => 'North Field',
@@ -85,11 +57,46 @@ try {
                 'pesticide_level' => 'normal',
                 'pesticide_value' => 40
             ]
-        ];
+    ];
+}
+
+$tableCheck = $mysqli->query("SHOW TABLES LIKE 'fields'");
+if (!$tableCheck || $tableCheck->num_rows === 0) {
+    echo json_encode(sampleFields());
+    exit;
+}
+
+$query = "
+    SELECT
+        f.id,
+        f.field_name,
+        f.latitude,
+        f.longitude,
+        f.area,
+        COALESCE(c.name, 'Mixed') AS crop_type,
+        f.soil_humidity,
+        f.temperature,
+        f.crop_health,
+        CASE
+            WHEN f.pesticide_level > 80 THEN 'danger'
+            WHEN f.pesticide_level > 50 THEN 'warning'
+            ELSE 'normal'
+        END AS pesticide_level,
+        f.pesticide_level AS pesticide_value,
+        f.last_updated
+    FROM fields f
+    LEFT JOIN crops c ON f.crop_id = c.id
+    ORDER BY f.field_name
+";
+
+try {
+    $result = $mysqli->query($query);
+    $fields = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    if (empty($fields)) {
+        $fields = sampleFields();
     }
-    
     echo json_encode($fields);
 } catch (Exception $e) {
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode(sampleFields());
 }
 ?>

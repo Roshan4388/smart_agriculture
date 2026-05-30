@@ -2,13 +2,58 @@
 let map;
 let ownerBoundary;
 let markers = [];
+let mapElements = [];
 let currentMapType = 'leaflet';
+let currentMapMode = 'real';
+let selectedMapElement = null;
 let selectedCropFilters = new Set();
 const cropOptions = ['Rice', 'Wheat', 'Corn', 'Vegetables', 'Fruits'];
 let weatherData = {};
 let planMarker = null;
 let planCircle = null;
 let planLocation = { lat: 27.7172, lng: 85.3240 };
+
+const virtualFields = [
+    {
+        id: 'virtual-1',
+        field_name: 'Virtual North Plot',
+        latitude: 27.71765,
+        longitude: 85.3241,
+        area: 1.4,
+        crop_type: 'Rice',
+        soil_humidity: '76%',
+        temperature: '23 C',
+        crop_health: 'Excellent',
+        pesticide_level: 'normal',
+        pesticide_value: 28
+    },
+    {
+        id: 'virtual-2',
+        field_name: 'Virtual East Greenhouse',
+        latitude: 27.71715,
+        longitude: 85.32468,
+        area: 0.9,
+        crop_type: 'Vegetables',
+        soil_humidity: '58%',
+        temperature: '29 C',
+        crop_health: 'Monitor',
+        pesticide_level: 'warning',
+        pesticide_value: 64
+    },
+    {
+        id: 'virtual-3',
+        field_name: 'Virtual Fruit Block',
+        latitude: 27.71676,
+        longitude: 85.32392,
+        area: 1.8,
+        crop_type: 'Fruits',
+        soil_humidity: '42%',
+        temperature: '31 C',
+        crop_health: 'Needs water',
+        pesticide_level: 'danger',
+        pesticide_value: 86
+    }
+];
 
 const cropColors = {
     'Rice': '#2E7D32',
@@ -61,6 +106,194 @@ function updateSelectedCropLabels() {
     selectedLabel.textContent = crops.length ? crops.join(', ') : 'All crops selected';
 }
 
+function setMapMode(mode) {
+    currentMapMode = mode === 'virtual' ? 'virtual' : 'real';
+    document.getElementById('real-mode-btn')?.classList.toggle('active', currentMapMode === 'real');
+    document.getElementById('virtual-mode-btn')?.classList.toggle('active', currentMapMode === 'virtual');
+    selectedMapElement = null;
+    updateSelectedElementPanel();
+    showElementTestResult(
+        currentMapMode === 'real'
+            ? 'Real mode selected. Field data is loaded from the server when available.'
+            : 'Virtual mode selected. Sample fields are ready for testing without live devices.',
+        'success'
+    );
+    loadFieldMarkers();
+}
+
+function registerMapElement(element) {
+    mapElements.push(element);
+    renderMapElementList();
+}
+
+function clearMapElements() {
+    mapElements = [];
+    renderMapElementList();
+}
+
+function selectMapElement(element) {
+    selectedMapElement = element;
+    updateSelectedElementPanel();
+    if (element.layer?.openPopup) {
+        element.layer.openPopup();
+    }
+}
+
+function updateSelectedElementPanel() {
+    const panel = document.getElementById('selected-element');
+    if (!panel) return;
+
+    if (!selectedMapElement) {
+        panel.innerHTML = '<strong>No element selected</strong>Click a field, boundary, or plan area on the map.';
+        return;
+    }
+
+    const field = selectedMapElement.field || {};
+    panel.innerHTML = `
+        <strong>${selectedMapElement.name}</strong>
+        <div>Type: ${selectedMapElement.type}</div>
+        <div>Mode: ${currentMapMode}</div>
+        ${field.crop_type ? `<div>Crop: ${field.crop_type}</div>` : ''}
+        ${field.soil_humidity ? `<div>Soil humidity: ${field.soil_humidity}</div>` : ''}
+        ${field.pesticide_level ? `<div>Pesticide: ${field.pesticide_level}</div>` : ''}
+    `;
+}
+
+function renderMapElementList() {
+    const list = document.getElementById('map-element-list');
+    if (!list) return;
+
+    const alwaysVisible = [
+        { id: 'boundary', name: 'Owner boundary', type: 'Boundary' },
+        { id: 'plan-area', name: 'Cultivation plan area', type: 'Plan' }
+    ];
+    const items = [...alwaysVisible, ...mapElements];
+
+    list.innerHTML = items.map((element, index) => `
+        <button class="btn-action" type="button" onclick="selectListedElement('${element.id}', ${index})">
+            ${element.name} - ${element.type}
+        </button>
+    `).join('');
+}
+
+function selectListedElement(id, index) {
+    if (id === 'boundary') {
+        selectMapElement({
+            id,
+            name: 'Owner boundary',
+            type: 'Boundary',
+            layer: ownerBoundary,
+            field: { crop_health: 'Protected', pesticide_level: 'normal' }
+        });
+        return;
+    }
+
+    if (id === 'plan-area') {
+        selectMapElement({
+            id,
+            name: 'Cultivation plan area',
+            type: 'Plan',
+            layer: planCircle,
+            field: {
+                crop_type: selectedCropFilters.size === 0 ? 'All selected crops' : Array.from(selectedCropFilters).join(', '),
+                soil_humidity: 'Planned',
+                pesticide_level: 'normal'
+            }
+        });
+        return;
+    }
+
+    const element = mapElements.find(item => item.id === id) || mapElements[index - 2];
+    if (element) {
+        selectMapElement(element);
+    }
+}
+
+function getNumericValue(value) {
+    const match = String(value ?? '').match(/\d+(\.\d+)?/);
+    return match ? Number(match[0]) : 0;
+}
+
+function getElementTest(element) {
+    const field = element.field || {};
+    const humidity = getNumericValue(field.soil_humidity);
+    const pesticide = getNumericValue(field.pesticide_value);
+    const pesticideStatus = field.pesticide_level || 'normal';
+    const issues = [];
+
+    if (humidity && humidity < 45) {
+        issues.push('Low soil humidity');
+    }
+    if (humidity > 80) {
+        issues.push('High soil humidity');
+    }
+    if (pesticideStatus === 'danger' || pesticide > 80) {
+        issues.push('Danger pesticide level');
+    } else if (pesticideStatus === 'warning' || pesticide > 50) {
+        issues.push('Warning pesticide level');
+    }
+    if (String(field.crop_health || '').toLowerCase().includes('needs')) {
+        issues.push('Crop health needs attention');
+    }
+
+    const severity = issues.some(issue => issue.includes('Danger')) ? 'danger' : issues.length ? 'warning' : 'success';
+    return {
+        severity,
+        message: issues.length
+            ? `${element.name}: ${issues.join(', ')}.`
+            : `${element.name}: test passed for ${currentMapMode} mode.`
+    };
+}
+
+function showElementTestResult(message, severity = 'success') {
+    const result = document.getElementById('element-test-result');
+    if (!result) return;
+    result.style.display = 'block';
+    result.className = `test-result ${severity === 'success' ? '' : severity}`;
+    result.textContent = message;
+}
+
+function testSelectedElement() {
+    if (!selectedMapElement) {
+        showElementTestResult('Select a map element first, then run the test.', 'warning');
+        return;
+    }
+
+    const test = getElementTest(selectedMapElement);
+    showElementTestResult(test.message, test.severity);
+}
+
+function testAllElements() {
+    const elements = [
+        {
+            id: 'boundary',
+            name: 'Owner boundary',
+            type: 'Boundary',
+            field: { crop_health: 'Protected', pesticide_level: 'normal' }
+        },
+        {
+            id: 'plan-area',
+            name: 'Cultivation plan area',
+            type: 'Plan',
+            field: { crop_health: 'Planned', pesticide_level: 'normal' }
+        },
+        ...mapElements
+    ];
+
+    if (!elements.length) {
+        showElementTestResult('No map elements are available to test.', 'warning');
+        return;
+    }
+
+    const tests = elements.map(getElementTest);
+    const severity = tests.some(test => test.severity === 'danger')
+        ? 'danger'
+        : tests.some(test => test.severity === 'warning')
+            ? 'warning'
+            : 'success';
+    showElementTestResult(tests.map(test => test.message).join(' '), severity);
+}
+
 function createPlanMarker(center) {
     planLocation = center;
     planMarker = L.marker([center.lat, center.lng], {
@@ -81,6 +314,8 @@ function createPlanMarker(center) {
 
     planMarker.on('drag', onPlanMarkerMove);
     planMarker.on('dragend', onPlanMarkerMove);
+    planMarker.on('click', () => selectListedElement('plan-area', 1));
+    planCircle.on('click', () => selectListedElement('plan-area', 1));
     updatePlanDetails();
 }
 
@@ -204,6 +439,7 @@ function initMap() {
         fillColor: '#00FF00',
         fillOpacity: 0.15,
     }).addTo(map);
+    ownerBoundary.on('click', () => selectListedElement('boundary', 0));
 
     L.marker(ownerCenter).addTo(map).bindPopup('Owner Land Center').openPopup();
     createPlanMarker({ lat: ownerCenter[0], lng: ownerCenter[1] });
@@ -221,12 +457,24 @@ function initMap() {
 }
 
 function loadFieldMarkers() {
-    fetch(`${getApiBasePath()}fetch_fields.php`)
-        .then(res => res.json())
+    const loadPromise = currentMapMode === 'virtual'
+        ? Promise.resolve(virtualFields)
+        : fetch(`${getApiBasePath()}fetch_fields.php`).then(res => res.json());
+
+    loadPromise
         .then(fields => {
+            if (!Array.isArray(fields)) {
+                fields = virtualFields;
+                showElementTestResult('Real field API was unavailable. Virtual test fields are shown instead.', 'warning');
+            }
+
             // Clear existing markers
-            markers.forEach(m => map.removeLayer(m.marker));
+            markers.forEach(m => {
+                if (m.marker) map.removeLayer(m.marker);
+                if (m.zone) map.removeLayer(m.zone);
+            });
             markers = [];
+            clearMapElements();
 
             fields.forEach(field => {
                     if (!isCropSelected(field.crop_type)) {
@@ -261,10 +509,52 @@ function loadFieldMarkers() {
                     .bindPopup(popupHTML)
                     .addTo(map);
 
-                markers.push({ marker, field });
+                const zone = createFieldZone(field, cropColor, popupHTML).addTo(map);
+                const element = {
+                    id: `field-${field.id}`,
+                    name: field.field_name,
+                    type: `${currentMapMode} field`,
+                    layer: marker,
+                    field
+                };
+
+                marker.on('click', () => selectMapElement(element));
+                zone.on('click', () => selectMapElement({ ...element, layer: zone }));
+
+                markers.push({ marker, zone, field });
+                registerMapElement(element);
             });
+
+            updateSelectedElementPanel();
         })
-        .catch(error => console.error('Error loading fields:', error));
+        .catch(error => {
+            console.error('Error loading fields:', error);
+            if (currentMapMode === 'real') {
+                currentMapMode = 'virtual';
+                document.getElementById('real-mode-btn')?.classList.remove('active');
+                document.getElementById('virtual-mode-btn')?.classList.add('active');
+                showElementTestResult('Real field data could not load, so virtual mode was opened for testing.', 'warning');
+                loadFieldMarkers();
+            }
+        });
+}
+
+function createFieldZone(field, cropColor, popupHTML) {
+    const lat = Number(field.latitude);
+    const lng = Number(field.longitude);
+    const size = Math.max(0.00018, Math.min(0.00038, Number(field.area || 1) * 0.00008));
+    return L.rectangle(
+        [
+            [lat - size, lng - size],
+            [lat + size, lng + size]
+        ],
+        {
+            color: cropColor,
+            weight: 2,
+            fillColor: cropColor,
+            fillOpacity: currentMapMode === 'virtual' ? 0.28 : 0.16
+        }
+    ).bindPopup(popupHTML);
 }
 
 function createCustomIcon(cropColor, pesticideStatus) {
@@ -380,8 +670,8 @@ function toggleMapType(mapType) {
 }
 
 function switchToGoogleMap() {
-    if (!document.getElementById('google-map')) {
-        alert('Google Maps integration requires API key setup. Using satellite view instead.');
+    if (!document.getElementById('google-map') || !window.google?.maps) {
+        showElementTestResult('3D view needs a valid Google Maps API key. Satellite map is available for testing now.', 'warning');
         switchToSatelliteMap();
         return;
     }
