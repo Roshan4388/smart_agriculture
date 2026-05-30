@@ -25,7 +25,7 @@ $currentWeather = [
     'humidity' => 68,
     'rainfall' => 85,
     'condition' => 'Partly Cloudy',
-    'recommendation' => 'Rice and maize are suitable. Maintain irrigation and check pests every 3 days.'
+    'recommendation' => 'Rice and maize are suitable. Monitor soil moisture and check pests every 3 days.'
 ];
 
 $recommendation = 'Rice is currently the strongest recommendation for this season because rainfall and soil moisture are high. Use nitrogen-rich fertilizer in the next planting window.';
@@ -53,13 +53,14 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
                         <div>
                             <span class="eyebrow">Precision AI</span>
                             <h1>Transform farming with precision AI</h1>
-                            <p>Actionable field intelligence for crop health, irrigation automation, weather prediction, pest detection, and marketplace growth.</p>
+                            <p>Actionable field intelligence for crop health, weather prediction,
+                                pest detection, and marketplace growth.</p>
                         </div>
                         <button class="theme-toggle">🌙 Dark mode</button>
                     </div>
 
                     <div class="hero-actions">
-                        <a href="irrigation-control.php" class="btn-primary">Start Monitoring</a>
+                        <a href="sensor-data.php" class="btn-primary">Start Monitoring</a>
                         <a href="modules/maps/land-map.php" class="btn-secondary">Explore Land Map</a>
                     </div>
 
@@ -119,8 +120,10 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
             </div>
             <div class="section-details" id="section-details">
                 <h2 id="section-detail-title">Expert Consult</h2>
-                <p id="section-detail-copy">Submit a consultation request and connect with agriculture specialists for crop planning, pest management, and market advice.</p>
-                <a id="section-detail-link" class="btn-secondary" href="modules/experts/consultation.php">Open Expert Consult</a>
+                <p id="section-detail-copy">Submit a consultation request and connect with agriculture specialists for
+                    crop planning, pest management, and market advice.</p>
+                <a id="section-detail-link" class="btn-secondary" href="modules/experts/consultation.php">Open Expert
+                    Consult</a>
             </div>
         </section>
 
@@ -278,57 +281,76 @@ $recommendation = 'Rice is currently the strongest recommendation for this seaso
     <script src="assets/js/map.js"></script>
     <script src="assets/js/alert.js"></script>
     <script>
-        const sectionInfo = {
-            'expert-consult': {
-                title: 'Expert Consult',
-                copy: 'Submit a consultation request and connect with agriculture specialists for crop planning, pest control, and market guidance.',
-                href: 'modules/experts/consultation.php'
-            },
-            'farmer-groups': {
-                title: 'Farmer Group',
-                copy: 'Join or manage farmer groups to collaborate on land planning, shared crop sales, and field insights.',
-                href: 'modules/groups/groups.php'
-            },
-            'view-marketplace': {
-                title: 'View Marketplace',
-                copy: 'Browse marketplace listings, add products, and manage your buyer connections in one place.',
-                href: 'modules/marketplace/products.php'
-            },
-            'expert-groups': {
-                title: 'Expert Groups',
-                copy: 'Explore groups led by agriculture experts and access specialized support for farm decisions.',
-                href: 'modules/groups/expert-groups.php'
-            },
-            'market-status': {
-                title: 'Market Status',
-                copy: 'Review current market demand, price signals, and assistant recommendations for your produce.',
-                href: 'market-status.php'
-            },
-            'market-assistant': {
-                title: 'Market Assistant',
-                copy: 'Use marketplace assistant tools to select buyer roles, compare prices, and prepare products for sale.',
-                href: 'market-assistant.php'
-            }
-        };
-
-        const cards = document.querySelectorAll('.section-card');
-        const detailTitle = document.getElementById('section-detail-title');
-        const detailCopy = document.getElementById('section-detail-copy');
-        const detailLink = document.getElementById('section-detail-link');
-
-        function showSection(key) {
-            const info = sectionInfo[key];
-            if (!info) return;
-            cards.forEach(card => card.classList.toggle('active', card.dataset.section === key));
-            detailTitle.textContent = info.title;
-            detailCopy.textContent = info.copy;
-            detailLink.href = info.href;
-            detailLink.textContent = `Go to ${info.title}`;
+    const sectionInfo = {
+        'expert-consult': {
+            title: 'Expert Consult',
+            copy: 'Submit a consultation request and connect with agriculture specialists for crop planning, pest control, and market guidance.',
+            href: 'modules/experts/consultation.php'
+        },
+        'farmer-groups': {
+            title: 'Farmer Group',
+            copy: 'Join or manage farmer groups to collaborate on land planning, shared crop sales, and field insights.',
+            href: 'modules/groups/groups.php'
+        },
+        'view-marketplace': {
+            title: 'View Marketplace',
+            copy: 'Browse marketplace listings, add products, and manage your buyer connections in one place.',
+            href: 'modules/marketplace/products.php'
+        },
+        'expert-groups': {
+            title: 'Expert Groups',
+            copy: 'Explore groups led by agriculture experts and access specialized support for farm decisions.',
+            href: 'modules/groups/expert-groups.php'
+        },
+        'market-status': {
+            title: 'Market Status',
+            copy: 'Review current market demand, price signals, and assistant recommendations for your produce.',
+            href: 'market-status.php'
+        },
+        'market-assistant': {
+            title: 'Market Assistant',
+            copy: 'Use marketplace assistant tools to select buyer roles, compare prices, and prepare products for sale.',
+            href: 'market-assistant.php'
         }
+    };
+
+    const cards = document.querySelectorAll('.section-card');
+    const detailTitle = document.getElementById('section-detail-title');
+    const detailCopy = document.getElementById('section-detail-copy');
+    const detailLink = document.getElementById('section-detail-link');
+
+    function showSection(key) {
+        const info = sectionInfo[key];
+        if (!info) return;
 
         cards.forEach(card => {
-            card.addEventListener('click', () => showSection(card.dataset.section));
+            const isActive = card.dataset.section === key;
+            card.classList.toggle('active', isActive);
+            card.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
+
+        detailTitle.textContent = info.title;
+        detailCopy.textContent = info.copy;
+        detailLink.href = info.href;
+        detailLink.textContent = `Go to ${info.title}`;
+    }
+
+    cards.forEach(card => {
+        // Mouse click
+        card.addEventListener('click', () => showSection(card.dataset.section));
+
+        // Keyboard accessibility
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-pressed', card.classList.contains('active') ? 'true' : 'false');
+        card.addEventListener('keydown', (e) => {
+            const key = e.key;
+            if (key === 'Enter' || key === ' ') {
+                e.preventDefault();
+                showSection(card.dataset.section);
+            }
+        });
+    });
     </script>
 </body>
 
