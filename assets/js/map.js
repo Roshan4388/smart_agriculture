@@ -7,6 +7,8 @@ let currentMapType = 'leaflet';
 let currentMapMode = 'real';
 let selectedMapElement = null;
 let selectedCropFilters = new Set();
+let selectedPesticideStatus = '';
+let selectedInsectRisk = '';
 const cropOptions = ['Rice', 'Wheat', 'Corn', 'Vegetables', 'Fruits'];
 let weatherData = {};
 let planMarker = null;
@@ -25,7 +27,8 @@ const virtualFields = [
         temperature: '23 C',
         crop_health: 'Excellent',
         pesticide_level: 'normal',
-        pesticide_value: 28
+        pesticide_value: 28,
+        insect_risk: 'none'
     },
     {
         id: 'virtual-2',
@@ -38,7 +41,8 @@ const virtualFields = [
         temperature: '29 C',
         crop_health: 'Monitor',
         pesticide_level: 'warning',
-        pesticide_value: 64
+        pesticide_value: 64,
+        insect_risk: 'low'
     },
     {
         id: 'virtual-3',
@@ -51,7 +55,8 @@ const virtualFields = [
         temperature: '31 C',
         crop_health: 'Needs water',
         pesticide_level: 'danger',
-        pesticide_value: 86
+        pesticide_value: 86,
+        insect_risk: 'high'
     }
 ];
 
@@ -79,6 +84,25 @@ function isCropSelected(cropType) {
     return selectedCropFilters.size === 0 || selectedCropFilters.has(cropType);
 }
 
+function getInsectRisk(field) {
+    if (field.insect_risk) {
+        return String(field.insect_risk).toLowerCase();
+    }
+
+    const pesticideStatus = String(field.pesticide_level || 'normal').toLowerCase();
+    if (pesticideStatus === 'danger') return 'high';
+    if (pesticideStatus === 'warning') return 'low';
+    return 'none';
+}
+
+function isStatusSelected(field) {
+    const pesticideStatus = String(field.pesticide_level || 'normal').toLowerCase();
+    const insectRisk = getInsectRisk(field);
+
+    return (!selectedPesticideStatus || pesticideStatus === selectedPesticideStatus)
+        && (!selectedInsectRisk || insectRisk === selectedInsectRisk);
+}
+
 function updateFilterButtons() {
     const filterButtons = document.querySelectorAll('.btn-filter');
     filterButtons.forEach(btn => {
@@ -89,6 +113,21 @@ function updateFilterButtons() {
         } else {
             btn.classList.toggle('active', selectedCropFilters.has(cropType));
         }
+    });
+}
+
+function updateLegendSelections() {
+    document.querySelectorAll('[data-crop-legend]').forEach(item => {
+        const cropType = item.getAttribute('data-crop-legend');
+        item.classList.toggle('active', selectedCropFilters.size === 0 || selectedCropFilters.has(cropType));
+    });
+
+    document.querySelectorAll('[data-pesticide-level]').forEach(item => {
+        item.classList.toggle('active', item.getAttribute('data-pesticide-level') === selectedPesticideStatus);
+    });
+
+    document.querySelectorAll('[data-insect-risk]').forEach(item => {
+        item.classList.toggle('active', item.getAttribute('data-insect-risk') === selectedInsectRisk);
     });
 }
 
@@ -104,6 +143,14 @@ function updateSelectedCropLabels() {
     if (!selectedLabel) return;
     const crops = selectedCropFilters.size === 0 ? cropOptions : Array.from(selectedCropFilters);
     selectedLabel.textContent = crops.length ? crops.join(', ') : 'All crops selected';
+}
+
+function refreshSelectionControls() {
+    updateFilterButtons();
+    updateCropCheckboxes();
+    updateSelectedCropLabels();
+    updateLegendSelections();
+    updatePlanDetails();
 }
 
 function setMapMode(mode) {
@@ -156,6 +203,7 @@ function updateSelectedElementPanel() {
         ${field.crop_type ? `<div>Crop: ${field.crop_type}</div>` : ''}
         ${field.soil_humidity ? `<div>Soil humidity: ${field.soil_humidity}</div>` : ''}
         ${field.pesticide_level ? `<div>Pesticide: ${field.pesticide_level}</div>` : ''}
+        <div>Insect risk: ${getInsectRisk(field)}</div>
     `;
 }
 
@@ -234,6 +282,11 @@ function getElementTest(element) {
     }
     if (String(field.crop_health || '').toLowerCase().includes('needs')) {
         issues.push('Crop health needs attention');
+    }
+    if (getInsectRisk(field) === 'high') {
+        issues.push('High insect risk');
+    } else if (getInsectRisk(field) === 'low') {
+        issues.push('Low insect risk');
     }
 
     const severity = issues.some(issue => issue.includes('Danger')) ? 'danger' : issues.length ? 'warning' : 'success';
@@ -352,17 +405,32 @@ function toggleCropSelection(cropType) {
     } else {
         selectedCropFilters.add(cropType);
     }
-    updateCropCheckboxes();
-    updateFilterButtons();
-    updateSelectedCropLabels();
+    refreshSelectionControls();
     loadFieldMarkers();
 }
 
 function clearSelectedCrops() {
     selectedCropFilters.clear();
-    updateCropCheckboxes();
-    updateFilterButtons();
-    updateSelectedCropLabels();
+    refreshSelectionControls();
+    loadFieldMarkers();
+}
+
+function selectPesticideStatus(status) {
+    selectedPesticideStatus = selectedPesticideStatus === status ? '' : status;
+    refreshSelectionControls();
+    loadFieldMarkers();
+}
+
+function selectInsectRisk(risk) {
+    selectedInsectRisk = selectedInsectRisk === risk ? '' : risk;
+    refreshSelectionControls();
+    loadFieldMarkers();
+}
+
+function clearStatusSelections() {
+    selectedPesticideStatus = '';
+    selectedInsectRisk = '';
+    refreshSelectionControls();
     loadFieldMarkers();
 }
 
@@ -414,9 +482,7 @@ function filterByCrop(cropType) {
         selectedCropFilters.clear();
         selectedCropFilters.add(cropType);
     }
-    updateFilterButtons();
-    updateCropCheckboxes();
-    updateSelectedCropLabels();
+    refreshSelectionControls();
     loadFieldMarkers();
 }
 
@@ -443,9 +509,7 @@ function initMap() {
 
     L.marker(ownerCenter).addTo(map).bindPopup('Owner Land Center').openPopup();
     createPlanMarker({ lat: ownerCenter[0], lng: ownerCenter[1] });
-    updateFilterButtons();
-    updateCropCheckboxes();
-    updateSelectedCropLabels();
+    refreshSelectionControls();
 
     loadFieldMarkers();
     loadWeatherData();
@@ -477,13 +541,19 @@ function loadFieldMarkers() {
             clearMapElements();
 
             fields.forEach(field => {
-                    if (!isCropSelected(field.crop_type)) {
+                    if (!isCropSelected(field.crop_type) || !isStatusSelected(field)) {
                     return;
                 }
 
                 const cropColor = cropColors[field.crop_type] || '#3498DB';
                 const pesticideStatus = field.pesticide_level || 'normal';
                 const pestLevel = pesticidesLevel[pesticideStatus];
+                const insectRisk = getInsectRisk(field);
+                const insectLabel = {
+                    none: 'No insects detected',
+                    low: 'Low risk - monitor',
+                    high: 'High risk - action needed'
+                }[insectRisk] || 'No insects detected';
 
                 // Create custom HTML for popup with pesticide info
                 const popupHTML = `
@@ -498,6 +568,7 @@ function loadFieldMarkers() {
                         </div>
                         <div style="margin-top: 8px; padding: 8px; background: ${pestLevel.color}20; border-left: 4px solid ${pestLevel.color};">
                             <strong>Pesticide Level:</strong> ${pestLevel.icon} ${pesticideStatus.toUpperCase()}<br>
+                            <strong>Insect Alert:</strong> ${insectLabel}<br>
                             <strong>Last Updated:</strong> ${new Date().toLocaleTimeString()}
                         </div>
                     </div>

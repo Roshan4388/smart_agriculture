@@ -122,7 +122,23 @@ $config = require __DIR__ . '/../../includes/config.php';
             display: flex;
             align-items: center;
             gap: 8px;
+            width: 100%;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            text-align: left;
+            cursor: pointer;
             margin: 5px 0;
+            padding: 6px;
+            border-radius: 5px;
+            transition: background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .legend-item:hover,
+        .legend-item.active {
+            background: #eef7f8;
+            box-shadow: inset 0 0 0 1px #b8dfe5;
         }
 
         .legend-color {
@@ -387,37 +403,38 @@ $config = require __DIR__ . '/../../includes/config.php';
                     <div class="control-section">
                         <h4>⚠️ Pesticide Status</h4>
                         <div class="legend">
-                            <div class="legend-item">
+                            <button class="legend-item" type="button" data-pesticide-level="normal" onclick="selectPesticideStatus('normal')">
                                 <div class="legend-color" style="background: #27AE60;"></div>
                                 <span>✓ Normal (0-50%)</span>
-                            </div>
-                            <div class="legend-item">
+                            </button>
+                            <button class="legend-item" type="button" data-pesticide-level="warning" onclick="selectPesticideStatus('warning')">
                                 <div class="legend-color" style="background: #F39C12;"></div>
                                 <span>⚠ Warning (50-80%)</span>
-                            </div>
-                            <div class="legend-item">
+                            </button>
+                            <button class="legend-item" type="button" data-pesticide-level="danger" onclick="selectPesticideStatus('danger')">
                                 <div class="legend-color" style="background: #E74C3C;"></div>
                                 <span>✕ Danger (80%+)</span>
-                            </div>
+                            </button>
                         </div>
+                        <button class="btn-action" type="button" onclick="clearStatusSelections()">Show all statuses</button>
                     </div>
 
                     <!-- Insect/Pest Detection -->
                     <div class="control-section">
                         <h4>🐛 Insect Alerts</h4>
                         <div class="legend">
-                            <div class="legend-item">
+                            <button class="legend-item" type="button" data-insect-risk="none" onclick="selectInsectRisk('none')">
                                 <div class="legend-color" style="background: #27AE60;"></div>
                                 <span>No Insects Detected</span>
-                            </div>
-                            <div class="legend-item">
+                            </button>
+                            <button class="legend-item" type="button" data-insect-risk="low" onclick="selectInsectRisk('low')">
                                 <div class="legend-color" style="background: #F39C12;"></div>
                                 <span>Low Risk - Monitor</span>
-                            </div>
-                            <div class="legend-item">
+                            </button>
+                            <button class="legend-item" type="button" data-insect-risk="high" onclick="selectInsectRisk('high')">
                                 <div class="legend-color" style="background: #E74C3C;"></div>
                                 <span>High Risk - Action Needed</span>
-                            </div>
+                            </button>
                         </div>
                     </div>
 
@@ -425,26 +442,26 @@ $config = require __DIR__ . '/../../includes/config.php';
                     <div class="control-section">
                         <h4>🎨 Crop Legend</h4>
                         <div class="legend">
-                            <div class="legend-item">
+                            <button class="legend-item" type="button" data-crop-legend="Rice" onclick="filterByCrop('Rice')">
                                 <div class="legend-color" style="background: #2E7D32;"></div>
                                 <span>Rice</span>
-                            </div>
-                            <div class="legend-item">
+                            </button>
+                            <button class="legend-item" type="button" data-crop-legend="Wheat" onclick="filterByCrop('Wheat')">
                                 <div class="legend-color" style="background: #F4D03F;"></div>
                                 <span>Wheat</span>
-                            </div>
-                            <div class="legend-item">
+                            </button>
+                            <button class="legend-item" type="button" data-crop-legend="Corn" onclick="filterByCrop('Corn')">
                                 <div class="legend-color" style="background: #F0AD4E;"></div>
                                 <span>Corn</span>
-                            </div>
-                            <div class="legend-item">
+                            </button>
+                            <button class="legend-item" type="button" data-crop-legend="Vegetables" onclick="filterByCrop('Vegetables')">
                                 <div class="legend-color" style="background: #27AE60;"></div>
                                 <span>Vegetables</span>
-                            </div>
-                            <div class="legend-item">
+                            </button>
+                            <button class="legend-item" type="button" data-crop-legend="Fruits" onclick="filterByCrop('Fruits')">
                                 <div class="legend-color" style="background: #E74C3C;"></div>
                                 <span>Fruits</span>
-                            </div>
+                            </button>
                         </div>
                     </div>
 

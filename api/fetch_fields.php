@@ -16,7 +16,8 @@ function sampleFields(): array
                 'temperature' => '24°C',
                 'crop_health' => 'Good',
                 'pesticide_level' => 'normal',
-                'pesticide_value' => 35
+                'pesticide_value' => 35,
+                'insect_risk' => 'none'
             ],
             [
                 'id' => 2,
@@ -29,7 +30,8 @@ function sampleFields(): array
                 'temperature' => '23°C',
                 'crop_health' => 'Excellent',
                 'pesticide_level' => 'normal',
-                'pesticide_value' => 25
+                'pesticide_value' => 25,
+                'insect_risk' => 'none'
             ],
             [
                 'id' => 3,
@@ -42,7 +44,8 @@ function sampleFields(): array
                 'temperature' => '25°C',
                 'crop_health' => 'Good',
                 'pesticide_level' => 'warning',
-                'pesticide_value' => 62
+                'pesticide_value' => 62,
+                'insect_risk' => 'low'
             ],
             [
                 'id' => 4,
@@ -55,7 +58,8 @@ function sampleFields(): array
                 'temperature' => '24°C',
                 'crop_health' => 'Good',
                 'pesticide_level' => 'normal',
-                'pesticide_value' => 40
+                'pesticide_value' => 40,
+                'insect_risk' => 'none'
             ]
     ];
 }
@@ -82,6 +86,11 @@ $query = "
             WHEN f.pesticide_level > 50 THEN 'warning'
             ELSE 'normal'
         END AS pesticide_level,
+        CASE
+            WHEN f.pesticide_level > 80 THEN 'high'
+            WHEN f.pesticide_level > 50 THEN 'low'
+            ELSE 'none'
+        END AS insect_risk,
         f.pesticide_level AS pesticide_value,
         f.last_updated
     FROM fields f
