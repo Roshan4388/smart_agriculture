@@ -58,6 +58,7 @@ function saveUserSettings(mysqli $mysqli, int $userId, array $values): bool
 }
 
 $settings = loadUserSettings($mysqli, $userId, $settingDefaults);
+$themeClass = $settings['theme'] === 'dark' ? ' dark-mode' : ($settings['theme'] === 'green' ? ' green-mode' : '');
 
 $feedback = '';
 $updated = false;
@@ -192,7 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['section'])) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= htmlspecialchars($settings['language']) ?>">
 
 <head>
     <meta charset="UTF-8">
@@ -379,44 +380,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['section'])) {
     </style>
 </head>
 
-<body class="settings-layout-<?= htmlspecialchars($settings['layout']) ?>">
+<body class="settings-layout-<?= htmlspecialchars($settings['layout']) ?><?= $themeClass ?>">
     <?php include __DIR__ . '/includes/navbar.php'; ?>
     <main class="dashboard-page">
         <section class="dashboard-section">
             <div class="section-header">
-                <h1>Settings</h1>
-                <p>Configure your Smart Agriculture dashboard and farm preferences from one place.</p>
+                <h1 data-i18n="settings.title">Settings</h1>
+                <p data-i18n="settings.subtitle">Configure your Smart Agriculture dashboard and farm preferences from one place.</p>
             </div>
             <?php if ($feedback) : ?>
                 <div class="alert-item alert-info settings-alert"><?= htmlspecialchars($feedback) ?></div>
             <?php endif; ?>
             <div class="settings-grid">
                 <div class="settings-menu">
-                    <a href="#appearance">Appearance</a>
-                    <a href="#account">Account</a>
-                    <a href="#language">Language</a>
-                    <a href="#notifications">Notifications</a>
-                    <a href="#security">Security</a>
-                    <a href="#farm-preferences">Farm Preferences</a>
-                    <a href="#switch-user">Switch User</a>
-                    <a href="#help-support">Help & Support</a>
-                    <a class="btn-secondary" href="logout.php">Logout</a>
+                    <a href="#appearance" data-i18n="settings.appearance">Appearance</a>
+                    <a href="#account" data-i18n="settings.account">Account</a>
+                    <a href="#language" data-i18n="settings.language">Language</a>
+                    <a href="#notifications" data-i18n="settings.notifications">Notifications</a>
+                    <a href="#security" data-i18n="settings.security">Security</a>
+                    <a href="#farm-preferences" data-i18n="settings.farmPreferences">Farm Preferences</a>
+                    <a href="#switch-user" data-i18n="settings.switchUser">Switch User</a>
+                    <a href="#help-support" data-i18n="settings.helpSupport">Help & Support</a>
+                    <a class="btn-secondary" href="logout.php" data-i18n="nav.logout">Logout</a>
                 </div>
 
                 <div>
                     <section id="appearance" class="settings-section">
-                        <h2>Appearance</h2>
+                        <h2 data-i18n="settings.appearance">Appearance</h2>
                         <div class="settings-card">
-                            <p>Choose your dashboard style and theme. Use the global dark/light toggle in the sidebar for quick switching.</p>
+                            <p data-i18n="settings.appearanceCopy">Choose your dashboard style and theme. Use the global dark/light toggle in the sidebar for quick switching.</p>
                         </div>
                         <form class="settings-form" method="post" action="settings.php">
                             <input type="hidden" name="section" value="appearance">
-                            <label for="theme">Theme</label>
+                            <label for="theme" data-i18n="settings.theme">Theme</label>
                             <select id="theme" name="theme">
-                                <option value="auto" <?= $settings['theme'] === 'auto' ? 'selected' : '' ?>>Auto (system)</option>
-                                <option value="light" <?= $settings['theme'] === 'light' ? 'selected' : '' ?>>Light</option>
-                                <option value="dark" <?= $settings['theme'] === 'dark' ? 'selected' : '' ?>>Dark</option>
-                                <option value="green" <?= $settings['theme'] === 'green' ? 'selected' : '' ?>>Green farm theme</option>
+                                <option value="auto" <?= $settings['theme'] === 'auto' ? 'selected' : '' ?> data-i18n="theme.auto">Auto (system)</option>
+                                <option value="light" <?= $settings['theme'] === 'light' ? 'selected' : '' ?> data-i18n="theme.light">Light</option>
+                                <option value="dark" <?= $settings['theme'] === 'dark' ? 'selected' : '' ?> data-i18n="theme.dark">Dark</option>
+                                <option value="green" <?= $settings['theme'] === 'green' ? 'selected' : '' ?> data-i18n="theme.green">Green farm theme</option>
                             </select>
                             <label for="layout">Dashboard layout</label>
                             <select id="layout" name="layout">
@@ -425,8 +426,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['section'])) {
                                 <option value="expanded" <?= $settings['layout'] === 'expanded' ? 'selected' : '' ?>>Expanded</option>
                             </select>
                             <div class="settings-actions">
-                                <button type="button" class="btn-secondary" id="preview-theme">Preview theme</button>
-                                <button type="submit" class="btn-primary">Save appearance</button>
+                                <button type="button" class="btn-secondary" id="preview-theme" data-i18n="settings.previewTheme">Preview theme</button>
+                                <button type="submit" class="btn-primary" data-i18n="settings.saveAppearance">Save appearance</button>
                             </div>
                         </form>
                     </section>
@@ -455,18 +456,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['section'])) {
                     </section>
 
                     <section id="language" class="settings-section">
-                        <h2>Language</h2>
-                        <p>Select your preferred interface language.</p>
+                        <h2 data-i18n="settings.language">Language</h2>
+                        <p data-i18n="settings.languageCopy">Select your preferred interface language.</p>
                         <form class="settings-form" method="post" action="settings.php">
                             <input type="hidden" name="section" value="language">
-                            <label for="language-select">Preferred language</label>
+                            <label for="language-select" data-i18n="settings.preferredLanguage">Preferred language</label>
                             <select id="language-select" name="language">
                                 <?php foreach ($config['supported_languages'] as $code => $label) : ?>
                                     <option value="<?= htmlspecialchars($code) ?>" <?= $settings['language'] === $code ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <div class="settings-actions">
-                                <button type="submit" class="btn-primary">Save language</button>
+                                <button type="submit" class="btn-primary" data-i18n="settings.saveLanguage">Save language</button>
                             </div>
                         </form>
                     </section>
@@ -565,6 +566,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['section'])) {
         (function() {
             const savedTheme = <?= json_encode($settings['theme']) ?>;
             const savedLayout = <?= json_encode($settings['layout']) ?>;
+            const savedLanguage = <?= json_encode($settings['language']) ?>;
 
             if (savedTheme === 'auto') {
                 localStorage.removeItem('smartAgTheme');
@@ -572,11 +574,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['section'])) {
                 localStorage.setItem('smartAgTheme', savedTheme);
             }
             localStorage.setItem('smartAgLayout', savedLayout);
+            localStorage.setItem('smartAgLanguage', savedLanguage);
 
             document.addEventListener('DOMContentLoaded', function() {
                 const previewButton = document.getElementById('preview-theme');
                 const themeSelect = document.getElementById('theme');
                 const layoutSelect = document.getElementById('layout');
+                const languageSelect = document.getElementById('language-select');
 
                 function previewAppearance() {
                     const theme = themeSelect.value;
@@ -592,6 +596,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['section'])) {
 
                 if (previewButton && themeSelect && layoutSelect) {
                     previewButton.addEventListener('click', previewAppearance);
+                    themeSelect.addEventListener('change', previewAppearance);
+                    layoutSelect.addEventListener('change', previewAppearance);
+                }
+
+                if (languageSelect && window.SmartAgUI) {
+                    languageSelect.addEventListener('change', function() {
+                        window.SmartAgUI.applyLanguage(languageSelect.value);
+                    });
                 }
             });
         })();
